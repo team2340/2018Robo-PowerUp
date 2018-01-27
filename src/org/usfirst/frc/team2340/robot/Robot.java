@@ -1,121 +1,239 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2017-2018 FIRST. All Rights Reserved.                        */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
 
 package org.usfirst.frc.team2340.robot;
 
+import java.util.ArrayList;
+
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.Rect;
+import org.opencv.imgproc.Imgproc;
+import org.usfirst.frc.team2340.robot.RobotUtils.AutoMode;
+import org.usfirst.frc.team2340.robot.commands.AutoDriveForward;
+import org.usfirst.frc.team2340.robot.commands.AutoOneSwitchRight;
+import org.usfirst.frc.team2340.robot.commands.CameraCommand;
+import org.usfirst.frc.team2340.robot.subsystems.*;
+
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import org.usfirst.frc.team2340.robot.commands.ExampleCommand;
-import org.usfirst.frc.team2340.robot.subsystems.ExampleSubsystem;
+import edu.wpi.first.wpilibj.vision.VisionThread;
 
 /**
  * The VM is configured to automatically run this class, and to call the
- * functions corresponding to each mode, as described in the TimedRobot
+ * functions corresponding to each mode, as described in the IterativeRobot
  * documentation. If you change the name of this class or the package after
- * creating this project, you must also update the build.properties file in the
- * project.
+ * creating this project, you must also update the manifest file in the resource
+ * directory.
  */
 public class Robot extends TimedRobot {
-	public static final ExampleSubsystem kExampleSubsystem
-			= new ExampleSubsystem();
-	public static OI m_oi;
+	public static final OI oi = new OI();
+	public static final DriveSubsystem drive = DriveSubsystem.getInstance();
+	public static final AcquisitionSubsystem acquisition = AcquisitionSubsystem.getInstance();
+	public static int lastTargets = 0;
 
-	Command m_autonomousCommand;
-	SendableChooser<Command> m_chooser = new SendableChooser<>();
+	Command autonomousCommand = null;
+	CameraCommand cameraCommand = null;
+	SendableChooser<AutoMode> autoMode = new SendableChooser<AutoMode>();
 
-	/**
-	 * This function is run when the robot is first started up and should be
-	 * used for any initialization code.
-	 */
-	@Override
+//	private VisionThread visionThread;
+//	private final Object imgLock = new Object();
+
+    /**
+     * This function is run when the robot is first started up and should be
+     * used for any initialization code.
+     */
 	public void robotInit() {
-		m_oi = new OI();
-		m_chooser.addDefault("Default Auto", new ExampleCommand());
-		// chooser.addObject("My Auto", new MyAutoCommand());
-		SmartDashboard.putData("Auto mode", m_chooser);
+		Robot.drive.centerX = 0;
+		RobotUtils.lengthOfRobot(33);
+		RobotUtils.setWheelDiameter(4);
+
+//		oi.gyro = new ADXRS450_Gyro();
+		
+        autoMode.addDefault("DriveForward", AutoMode.DriveForward);
+		autoMode.addObject("Disabled", AutoMode.DISABLED);
+		autoMode.addObject("OneSwitch", AutoMode.OneSwitch);
+		autoMode.addObject("OneScale", AutoMode.OneScale);
+		autoMode.addObject("TwoSwitch", AutoMode.TwoSwitch);
+		autoMode.addObject("ThreeSwitch", AutoMode.ThreeSwitch);
+		autoMode.addObject("ThreeScale", AutoMode.ThreeScale);
+		SmartDashboard.putData("Autonomous Modes", autoMode);
+
+		// when we didn't have the camera open in this resolution 640x480, the grip pipeline was 
+		// finding a different number of targets than the computer would find attached to the 
+		// same camera in the grip application.
+
+		cameraCommand = new CameraCommand(); 
+		UsbCamera camera = cameraCommand.getcamera();
+//		UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+		System.out.println("Camera name: " + camera.getName());
+		camera.setResolution((int)Robot.oi.IMG_WIDTH, (int)Robot.oi.IMG_HEIGHT);
+
+//		visionThread = new VisionThread(camera,new GripPipelineRectangle(), grip -> {
+//			if(!grip.filterContoursOutput().isEmpty()){
+//				ArrayList<MatOfPoint> contours = grip.filterContoursOutput();
+//				ArrayList<MatOfPoint> targets = new ArrayList<MatOfPoint>();
+//				for(MatOfPoint point : contours){
+//					double expectedRation = 2.54;
+//					double tolerance = 2;
+//					Rect r = Imgproc.boundingRect(point);
+//					double ration = r.height/r.width;
+//
+//					if(ration < expectedRation + tolerance && ration > expectedRation - tolerance){
+//						targets.add(point);
+//					}
+//				}
+//				if ( lastTargets != targets.size()) { 
+//					lastTargets = targets.size();
+////					if(!isOperatorControl()){
+//						System.out.println(System.currentTimeMillis() + " num targets: " + lastTargets);
+////					}
+//				}
+//				if(targets.size() == 2){
+//					Rect r = Imgproc.boundingRect(grip.filterContoursOutput().get(0));
+//					Rect q = Imgproc.boundingRect(grip.filterContoursOutput().get(1));
+//					synchronized(imgLock){
+//						Robot.drive.centerX = (r.x + (r.width/2) + q.x + (q.width/2))/2.0;
+//						//put code here
+//						double leftmost=0.0;
+//						double rightmost=0.0;
+//						double pxBetweenTargets=0.0;
+//						double angleBetweenTargets=0.0;
+//						double halfAngleBetweenTargets=0.0;
+//						double lengthOfOpposite=5.125;
+//						double distanceFromTarget =0.0;
+//						if ( r.x < q.x) {
+//							leftmost = r.x;
+//							rightmost = q.x+ q.width;
+//						} else {
+//							leftmost = q.x;
+//							rightmost = r.x+ r.width;
+//						}
+//						pxBetweenTargets = rightmost - leftmost;
+//						angleBetweenTargets = (Robot.oi.CAM_VIEWING_ANGLE * pxBetweenTargets)/Robot.oi.IMG_WIDTH;
+//						halfAngleBetweenTargets = angleBetweenTargets/2.0;
+//						double radians = Math.toRadians(halfAngleBetweenTargets);
+//						distanceFromTarget = lengthOfOpposite/ (Math.tan(radians));
+//						if ( distanceFromTarget >= 0 ) {
+//							Robot.drive.finalDistance = distanceFromTarget;
+//						}
+////						if(!isOperatorControl()){
+//							System.out.println(System.currentTimeMillis() + " r.x: "+r.x+", r.width: "+r.width
+//									+", q.x: "+q.x+", q.width: "+q.width
+//									+", centerX: "+Robot.drive.centerX + ", distance: "+distanceFromTarget);
+////						}
+//						//System.out.println("leftmost: " + leftmost + " rightmost: " + rightmost);
+//					}
+//				} else {
+//					Robot.drive.centerX = -1;
+//				}
+//				SmartDashboard.putNumber("CenterX", Robot.drive.centerX);
+//			} else {
+//				Robot.drive.centerX = -1;
+//			}
+//		});
+//		visionThread.start();
 	}
 
-	/**
-	 * This function is called once each time the robot enters Disabled mode.
-	 * You can use it to reset any subsystem information you want to clear when
-	 * the robot is disabled.
-	 */
-	@Override
-	public void disabledInit() {
-
+	public void disabledInit(){
+		if(cameraCommand != null){
+			cameraCommand.cancel();
+		}
 	}
 
-	@Override
 	public void disabledPeriodic() {
 		Scheduler.getInstance().run();
 	}
 
-	/**
-	 * This autonomous (along with the chooser code above) shows how to select
-	 * between different autonomous modes using the dashboard. The sendable
-	 * chooser code works with the Java SmartDashboard. If you prefer the
-	 * LabVIEW Dashboard, remove all of the chooser code and uncomment the
-	 * getString code to get the auto name from the text box below the Gyro
-	 *
-	 * <p>You can add additional auto modes by adding additional commands to the
-	 * chooser code above (like the commented example) or additional comparisons
-	 * to the switch structure below with additional strings & commands.
-	 */
-	@Override
 	public void autonomousInit() {
-		m_autonomousCommand = m_chooser.getSelected();
+		oi.gyro.reset();
+		Robot.drive.setForPosition();
+		AutoMode am = (AutoMode) autoMode.getSelected();
 
-		/*
-		 * String autoSelected = SmartDashboard.getString("Auto Selector",
-		 * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
-		 * = new MyAutoCommand(); break; case "Default Auto": default:
-		 * autonomousCommand = new ExampleCommand(); break; }
-		 */
-
-		// schedule the autonomous command (example)
-		if (m_autonomousCommand != null) {
-			m_autonomousCommand.start();
+		if(am == AutoMode.DriveForward){
+			autonomousCommand = new AutoDriveForward();
 		}
+		else if (am == AutoMode.OneSwitch) {
+			String gameData;
+			gameData = DriverStation.getInstance().getGameSpecificMessage();
+			if(gameData.charAt(0) == 'R')
+			{
+				autonomousCommand = new AutoOneSwitchRight();
+			}
+			else {
+				autonomousCommand = new AutoOneSwitchLeft();
+			}
+		}
+		else if(am == AutoMode.OneScale){
+			String gameData;
+			gameData = DriverStation.getInstance().getGameSpecificMessage();
+			if(gameData.charAt(1) == 'R')
+			{
+				autonomousCommand = new AutoOneSwitchRight();
+			}
+			else {
+				autonomousCommand = new AutoOneSwitchLeft();
+			}
+		}
+		else if(am == AutoMode.TwoSwitch){
+			String gameData;
+			gameData = DriverStation.getInstance().getGameSpecificMessage();
+			if(gameData.charAt(0) == 'R'){
+				autonomousCommand = new AutoTwoSwitchRight();
+			}
+			else {
+				autonomousCommand = new AutoDriveForward();
+			}
+		}
+		else if(am == AutoMode.ThreeSwitch){
+			String gameData;
+			gameData = DriverStation.getInstance().getGameSpecificMessage();
+			if(gameData.charAt(0) == 'R')
+			{
+				autonomousCommand = new AutoThreeSwitchRight();
+			}
+			else {
+				autonomousCommand = new AutoThreeSwitchLeft();
+			}
+		}
+		else if(am == AutoMode.ThreeScale){
+			String gameData;
+			gameData = DriverStation.getInstance().getGameSpecificMessage();
+			if(gameData.charAt(1) == 'R')
+			{
+				autonomousCommand = new AutoThreeScaleRight();
+			}
+			else {
+				autonomousCommand = new AutoThreeScaleLeft();
+			}
+		}
+		else if (am == AutoMode.DISABLED) {} //Do Nothing if disabled
+
+		System.out.println(am);
+		if (autonomousCommand != null) autonomousCommand.start();
 	}
 
-	/**
-	 * This function is called periodically during autonomous.
-	 */
-	@Override
 	public void autonomousPeriodic() {
+		SmartDashboard.putNumber("left position", Robot.oi.left.getSelectedSensorPosition(0));
+		SmartDashboard.putNumber("right position ",Robot.oi.right.getSelectedSensorPosition(0)); 
 		Scheduler.getInstance().run();
 	}
 
-	@Override
 	public void teleopInit() {
-		// This makes sure that the autonomous stops running when
-		// teleop starts running. If you want the autonomous to
-		// continue until interrupted by another command, remove
-		// this line or comment it out.
-		if (m_autonomousCommand != null) {
-			m_autonomousCommand.cancel();
-		}
+		if (autonomousCommand != null) autonomousCommand.cancel();
+		Robot.drive.setForVBus();
+		cameraCommand.start();	
 	}
 
-	/**
-	 * This function is called periodically during operator control.
-	 */
-	@Override
 	public void teleopPeriodic() {
+		SmartDashboard.putNumber("left position", Robot.oi.left.getSelectedSensorPosition(0));
+		SmartDashboard.putNumber("right position ",Robot.oi.right.getSelectedSensorPosition(0));
 		Scheduler.getInstance().run();
 	}
 
-	/**
-	 * This function is called periodically during test mode.
-	 */
-	@Override
 	public void testPeriodic() {
 	}
 }
