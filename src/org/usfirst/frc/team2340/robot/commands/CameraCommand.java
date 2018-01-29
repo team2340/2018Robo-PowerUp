@@ -34,6 +34,7 @@ public class CameraCommand extends Command {
 		buttonPressed = false;
 		
 		server.setSource(camera0);
+		curCam.setResolution((int)Robot.oi.IMG_WIDTH, (int)Robot.oi.IMG_HEIGHT);
 	}
 	@Override
 	protected void initialize() {

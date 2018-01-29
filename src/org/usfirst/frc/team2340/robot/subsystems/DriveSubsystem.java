@@ -73,7 +73,7 @@ public class DriveSubsystem extends Subsystem {
 			Robot.oi.right = new WPI_TalonSRX(RobotMap.RIGHT_TAL_ID);
 			
 			Robot.oi.right.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder,0,0);
-//			Robot.oi.right.reverseSensor(true);
+			Robot.oi.right.setInverted(true); //TODO: verify this is the right thing to pass to make right positive
 //			Robot.oi.right.configEncoderCodesPerRev(360); //TODO: not using 360
 			Robot.oi.right.configNominalOutputForward(0,0);
 			Robot.oi.right.configNominalOutputReverse(0,0);
@@ -135,7 +135,7 @@ public class DriveSubsystem extends Subsystem {
 	public void setForVBus() {
 		Robot.oi.left.set(ControlMode.PercentOutput,0);
         Robot.oi.right.set(ControlMode.PercentOutput,0);
-        robotDrive.setMaxOutput (vBusMaxOutput);
+        robotDrive.setMaxOutput(vBusMaxOutput);
 		setArcadeSpeed(0,0);
 	}
 	
