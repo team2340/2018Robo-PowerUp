@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ArcadeDriveCommand extends Command {
-
+ 
 	private Joystick controller;
 //	private boolean gyroEnable;
 //	private boolean prevState;
