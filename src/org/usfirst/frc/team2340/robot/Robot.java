@@ -56,7 +56,7 @@ public class Robot extends TimedRobot {
 		autoMode.addObject("ThreeScale", AutoMode.ThreeScale);
 		SmartDashboard.putData("Autonomous Modes", autoMode);
 
-		cameraCommand = new CameraCommand(); 
+		cameraCommand = new CameraCommand(RobotMap.BUTTON_7); 
 		(new VisionCommand(cameraCommand.getcamera())).start();
 	}
 

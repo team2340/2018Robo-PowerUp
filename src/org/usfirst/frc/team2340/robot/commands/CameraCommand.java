@@ -13,12 +13,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class CameraCommand extends Command {
 	UsbCamera curCam, camera0, camera1;
 	Joystick controller;
+	int toggleButton;
 	boolean buttonPressed = false;
 	VideoSink server;
 	
-	public CameraCommand(){
+	public CameraCommand(int _button){
 		controller = Robot.oi.driveController;
-
+		toggleButton = _button;
 		int intcam0 = 0;
 		int intcam1 = 1;
 		
@@ -43,7 +44,7 @@ public class CameraCommand extends Command {
 	@Override
 	protected void execute() {
 		SmartDashboard.putString("Current Cam", curCam.getName());
-		if(controller.getRawButton(RobotMap.BUTTON_7)){
+		if(controller.getRawButton(toggleButton)){
 			if(!buttonPressed) {
 				buttonPressed = true;
 				switchView();
