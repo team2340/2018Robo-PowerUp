@@ -44,6 +44,7 @@ public class DebugLogger {
 		//TODO: Only open if it isn't already opened.
 		try {
 			log = Logger.getLogger(_fileName);
+			log.setUseParentHandlers(false); //Disables console output
 			fh = new FileHandler(_filePath+_fileName+format.format(Calendar.getInstance().getTime())+_extension);
 			fh.setFormatter(logFormat);
 			log.addHandler(fh);
