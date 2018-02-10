@@ -20,9 +20,13 @@ public class OI {
 	public Joystick driveController = new Joystick(RobotMap.DRIVE_PORT);
 	public Joystick acquisitionController = new Joystick(RobotMap.ACQUISITION_PORT);
 	public ADXRS450_Gyro gyro = null;
-   
+
 	public WPI_TalonSRX left = null;
 	public WPI_TalonSRX right = null;
+	public WPI_TalonSRX elevator = null;
+	public WPI_TalonSRX armone = null; 
+	public WPI_TalonSRX armtwo = null;
+	public WPI_TalonSRX climbing = null;
 	
 	public final double CAM_VIEWING_ANGLE = 61.0;
 	public final double IMG_WIDTH = 640.0;

@@ -1,7 +1,6 @@
 package org.usfirst.frc.team2340.robot.commands;
 
 import org.usfirst.frc.team2340.robot.Robot;
-import org.usfirst.frc.team2340.robot.RobotMap;
 import org.usfirst.frc.team2340.robot.RobotUtils;
 
 import edu.wpi.first.wpilibj.command.Command;

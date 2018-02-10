@@ -2,13 +2,16 @@
 package org.usfirst.frc.team2340.robot;
 
 import org.usfirst.frc.team2340.robot.RobotUtils.AutoMode;
+import org.usfirst.frc.team2340.robot.commands.AutoArm;
 import org.usfirst.frc.team2340.robot.commands.AutoDriveForward;
+import org.usfirst.frc.team2340.robot.commands.Elevator;
 import org.usfirst.frc.team2340.robot.commands.CameraCommand;
 import org.usfirst.frc.team2340.robot.commands.Rotation;
 import org.usfirst.frc.team2340.robot.subsystems.*;
 
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.CommandGroup;
@@ -33,14 +36,13 @@ public class Robot extends TimedRobot {
 	CameraCommand cameraCommand = null;
 	SendableChooser<AutoMode> autoMode = new SendableChooser<AutoMode>();
 
-	//	private VisionThread visionThread;
-	//	private final Object imgLock = new Object();
 
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
 	 */
 	public void robotInit() {
+		System.out.println("robotinit");
 		Robot.drive.centerX = 0;
 		RobotUtils.lengthOfRobot(33);
 		RobotUtils.setWheelDiameter(4);
@@ -56,80 +58,11 @@ public class Robot extends TimedRobot {
 		autoMode.addObject("ThreeScale", AutoMode.ThreeScale);
 		SmartDashboard.putData("Autonomous Modes", autoMode);
 
-		// when we didn't have the camera open in this resolution 640x480, the grip pipeline was 
-		// finding a different number of targets than the computer would find attached to the 
-		// same camera in the grip application.
-
 		cameraCommand = new CameraCommand(); 
-		UsbCamera camera = cameraCommand.getcamera();
-		//		UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+		UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
 		System.out.println("Camera name: " + camera.getName());
 		camera.setResolution((int)Robot.oi.IMG_WIDTH, (int)Robot.oi.IMG_HEIGHT);
 
-		//		visionThread = new VisionThread(camera,new GripPipelineRectangle(), grip -> {
-		//			if(!grip.filterContoursOutput().isEmpty()){
-		//				ArrayList<MatOfPoint> contours = grip.filterContoursOutput();
-		//				ArrayList<MatOfPoint> targets = new ArrayList<MatOfPoint>();
-		//				for(MatOfPoint point : contours){
-		//					double expectedRation = 2.54;
-		//					double tolerance = 2;
-		//					Rect r = Imgproc.boundingRect(point);
-		//					double ration = r.height/r.width;
-		//
-		//					if(ration < expectedRation + tolerance && ration > expectedRation - tolerance){
-		//						targets.add(point);
-		//					}
-		//				}
-		//				if ( lastTargets != targets.size()) { 
-		//					lastTargets = targets.size();
-		////					if(!isOperatorControl()){
-		//						System.out.println(System.currentTimeMillis() + " num targets: " + lastTargets);
-		////					}
-		//				}
-		//				if(targets.size() == 2){
-		//					Rect r = Imgproc.boundingRect(grip.filterContoursOutput().get(0));
-		//					Rect q = Imgproc.boundingRect(grip.filterContoursOutput().get(1));
-		//					synchronized(imgLock){
-		//						Robot.drive.centerX = (r.x + (r.width/2) + q.x + (q.width/2))/2.0;
-		//						//put code here
-		//						double leftmost=0.0;
-		//						double rightmost=0.0;
-		//						double pxBetweenTargets=0.0;
-		//						double angleBetweenTargets=0.0;
-		//						double halfAngleBetweenTargets=0.0;
-		//						double lengthOfOpposite=5.125;
-		//						double distanceFromTarget =0.0;
-		//						if ( r.x < q.x) {
-		//							leftmost = r.x;
-		//							rightmost = q.x+ q.width;
-		//						} else {
-		//							leftmost = q.x;
-		//							rightmost = r.x+ r.width;
-		//						}
-		//						pxBetweenTargets = rightmost - leftmost;
-		//						angleBetweenTargets = (Robot.oi.CAM_VIEWING_ANGLE * pxBetweenTargets)/Robot.oi.IMG_WIDTH;
-		//						halfAngleBetweenTargets = angleBetweenTargets/2.0;
-		//						double radians = Math.toRadians(halfAngleBetweenTargets);
-		//						distanceFromTarget = lengthOfOpposite/ (Math.tan(radians));
-		//						if ( distanceFromTarget >= 0 ) {
-		//							Robot.drive.finalDistance = distanceFromTarget;
-		//						}
-		////						if(!isOperatorControl()){
-		//							System.out.println(System.currentTimeMillis() + " r.x: "+r.x+", r.width: "+r.width
-		//									+", q.x: "+q.x+", q.width: "+q.width
-		//									+", centerX: "+Robot.drive.centerX + ", distance: "+distanceFromTarget);
-		////						}
-		//						//System.out.println("leftmost: " + leftmost + " rightmost: " + rightmost);
-		//					}
-		//				} else {
-		//					Robot.drive.centerX = -1;
-		//				}
-		//				SmartDashboard.putNumber("CenterX", Robot.drive.centerX);
-		//			} else {
-		//				Robot.drive.centerX = -1;
-		//			}
-		//		});
-		//		visionThread.start();
 	}
 
 	public void disabledInit(){
@@ -159,6 +92,8 @@ public class Robot extends TimedRobot {
 				autonomousCommand.addSequential(new AutoDriveForward(168));
 				autonomousCommand.addSequential(new Rotation (90, false));
 				autonomousCommand.addSequential(new AutoDriveForward(55.56+(.5*RobotUtils.getLengthOfRobot())));
+				autonomousCommand.addSequential(new Elevator(19));
+				autonomousCommand.addSequential(new AutoArm ( ));
 			}
 			else {
 				autonomousCommand.addSequential(new AutoDriveForward(228.735));
@@ -168,6 +103,8 @@ public class Robot extends TimedRobot {
 				autonomousCommand.addSequential(new AutoDriveForward (88.735+(.5*RobotUtils.getLengthOfRobot())));
 				autonomousCommand.addSequential(new Rotation (90, false));
 				autonomousCommand.addSequential(new AutoDriveForward (55.56+(.5*RobotUtils.getLengthOfRobot())));
+				autonomousCommand.addSequential(new Elevator(19));
+				autonomousCommand.addSequential(new AutoArm ( ));
 			}
 		}
 		else if(am == AutoMode.OneScale){
@@ -178,6 +115,8 @@ public class Robot extends TimedRobot {
 				autonomousCommand.addSequential(new AutoDriveForward(340.5));
 				autonomousCommand.addSequential(new Rotation (90, false));
 				autonomousCommand.addSequential(new AutoDriveForward(42.06+(.5*RobotUtils.getLengthOfRobot())));
+				autonomousCommand.addSequential(new Elevator(51));
+				autonomousCommand.addSequential(new AutoArm ( ));
 			}
 			else {
 				autonomousCommand.addSequential(new AutoDriveForward(228.735));
@@ -187,6 +126,8 @@ public class Robot extends TimedRobot {
 				autonomousCommand.addSequential(new AutoDriveForward (106.265+(.5*RobotUtils.getLengthOfRobot())));
 				autonomousCommand.addSequential(new Rotation (90, true));
 				autonomousCommand.addSequential(new AutoDriveForward (42.06+(.5*RobotUtils.getLengthOfRobot())));
+				autonomousCommand.addSequential(new Elevator(51));
+				autonomousCommand.addSequential(new AutoArm ( ));
 			}
 		}
 		else if(am == AutoMode.TwoSwitch){
@@ -194,6 +135,8 @@ public class Robot extends TimedRobot {
 			gameData = DriverStation.getInstance().getGameSpecificMessage();
 			if(gameData.charAt(0) == 'R'){
 				autonomousCommand.addSequential(new AutoDriveForward(140));
+				autonomousCommand.addSequential(new Elevator(19));
+				autonomousCommand.addSequential(new AutoArm ( ));
 			}
 			else {
 				autonomousCommand.addSequential(new AutoDriveForward(130));
@@ -211,11 +154,15 @@ public class Robot extends TimedRobot {
 				autonomousCommand.addSequential(new AutoDriveForward (88.735+(.5*RobotUtils.getLengthOfRobot())));
 				autonomousCommand.addSequential(new Rotation (90, true));
 				autonomousCommand.addSequential(new AutoDriveForward (55.56+(.5*RobotUtils.getLengthOfRobot())));
+				autonomousCommand.addSequential(new Elevator(19));
+				autonomousCommand.addSequential(new AutoArm ( ));
 			}
 			else {
 				autonomousCommand.addSequential(new AutoDriveForward(168));
 				autonomousCommand.addSequential(new Rotation (90, true));
 				autonomousCommand.addSequential(new AutoDriveForward(55.56+(.5*RobotUtils.getLengthOfRobot())));
+				autonomousCommand.addSequential(new Elevator(19));
+				autonomousCommand.addSequential(new AutoArm ( ));
 			}
 		}
 		else if(am == AutoMode.ThreeScale){
@@ -230,18 +177,24 @@ public class Robot extends TimedRobot {
 				autonomousCommand.addSequential(new AutoDriveForward (106.265+(.5*RobotUtils.getLengthOfRobot())));
 				autonomousCommand.addSequential(new Rotation (90, false));
 				autonomousCommand.addSequential(new AutoDriveForward (42.06+(.5*RobotUtils.getLengthOfRobot())));
+				autonomousCommand.addSequential(new Elevator(51));
+				autonomousCommand.addSequential(new AutoArm ( ));
 
 			}
 			else {
 				autonomousCommand.addSequential(new AutoDriveForward(340.5));
 				autonomousCommand.addSequential(new Rotation (90,true));
 				autonomousCommand.addSequential(new AutoDriveForward(41.88+(.5*RobotUtils.getLengthOfRobot())));
+				autonomousCommand.addSequential(new Elevator(51));
+				autonomousCommand.addSequential(new AutoArm ( ));
 			}
 		}
 		else if (am == AutoMode.DISABLED) {} //Do Nothing if disabled
 
 		System.out.println(am);
 		if (autonomousCommand != null) autonomousCommand.start();
+		
+		cameraCommand.start();
 	}
 
 	public void autonomousPeriodic() {
@@ -253,7 +206,6 @@ public class Robot extends TimedRobot {
 	public void teleopInit() {
 		if (autonomousCommand != null) autonomousCommand.cancel();
 		Robot.drive.setForVBus();
-		cameraCommand.start();	
 	}
 
 	public void teleopPeriodic() {

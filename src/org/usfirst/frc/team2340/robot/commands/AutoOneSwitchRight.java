@@ -25,6 +25,7 @@ public class AutoOneSwitchRight extends Command {
 	}
 
 	@Override
+	
 	protected void execute() {
 		long elapsed = (System.currentTimeMillis() - startTime)/1000;
 
