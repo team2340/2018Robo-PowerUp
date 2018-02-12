@@ -12,7 +12,7 @@ public class ArcadeDriveCommand extends Command {
 	private Joystick controller;
 //	private boolean gyroEnable;
 //	private boolean prevState;
-	private boolean button2Pressed,on;
+//	private boolean button2Pressed,on;
 	
 	public ArcadeDriveCommand(){
 		requires(Robot.drive);
@@ -23,7 +23,7 @@ public class ArcadeDriveCommand extends Command {
 	
 	@Override
 	protected void initialize() {
-		button2Pressed=on =false;
+//		button2Pressed=on =false;
 	}
 	private boolean adjustRotation()
 	{
@@ -72,54 +72,20 @@ public class ArcadeDriveCommand extends Command {
 
 		z = (3-controller.getZ())/2;
 		y = -controller.getY()/z;
-		x = -controller.getX()/z; 
+		x = controller.getX()/z; 
 		if(controller.getRawButton(RobotMap.BUTTON_2)){
-			if(!button2Pressed){
-				System.out.println("button two pressed");
-				if(on){
-					System.out.println("button two on");
-					setSpeed(0);
-					Robot.drive.setForVBus();
-					on =false;
-				}
-				else{
-					System.out.println("button two off");
-					Robot.drive.setForSpeed();
-					x=0;
-					if(y >= 0){
-						y = -controller.getY();
-						y *= .2;
-					}
-					else{
-						y = 0;
-					}
-					adjustRotation();
-					on= true;
-				}
-				button2Pressed = true;
+			if(button2Pressed){
+				
 			}
-		}
-		else
-		{
-			button2Pressed = false;
-			if(on){
-				adjustRotation();
-				x=0;
-				if (y >= 0){
-					y = -controller.getY();
-					y *= .2;
-				}
-				else{
-					y = 0;
-				}
-				System.out.println("button two adjustRotation");
 			}
 			else{
-				//System.out.println("button two not pressed");	
+
 			}
-		}
-		
+
+
 		Robot.drive.setArcadeSpeed(x, y);
+		System.out.println("ArcadeSpeed x:"+x+" y:"+y);
+		
 	}
 
 	@Override

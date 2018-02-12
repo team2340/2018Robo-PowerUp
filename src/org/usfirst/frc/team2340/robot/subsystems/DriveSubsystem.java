@@ -73,7 +73,7 @@ public class DriveSubsystem extends Subsystem {
 			Robot.oi.right = new WPI_TalonSRX(RobotMap.RIGHT_TAL_ID);
 
 			Robot.oi.right.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder,0,0);
-			Robot.oi.right.setInverted(true);
+			Robot.oi.right.setInverted(false);
 //			Robot.oi.right.configEncoderCodesPerRev(360); //TODO: not using 360
 			Robot.oi.right.configNominalOutputForward(0,0);
 			Robot.oi.right.configNominalOutputReverse(0,0);

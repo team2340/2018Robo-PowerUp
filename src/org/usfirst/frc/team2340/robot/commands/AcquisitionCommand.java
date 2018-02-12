@@ -7,7 +7,7 @@ import org.usfirst.frc.team2340.robot.RobotUtils;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.Subsystem;
+//import edu.wpi.first.wpilibj.command.Subsystem; I comented this out hope that is ok
 
 public class AcquisitionCommand extends Command {
 	private Joystick controller;
