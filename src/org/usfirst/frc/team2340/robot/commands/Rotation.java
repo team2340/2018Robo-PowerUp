@@ -2,6 +2,8 @@ package org.usfirst.frc.team2340.robot.commands;
 
 import org.usfirst.frc.team2340.robot.Robot;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -20,6 +22,7 @@ public class Rotation extends Command {
 	@Override
 	protected void initialize() {
 		startTime = System.currentTimeMillis();
+		Robot.oi.gyro.reset();
 	}
 	
 	@Override
@@ -28,18 +31,15 @@ public class Rotation extends Command {
 		SmartDashboard.putNumber("Gyro angle", angle);
 
 		if (angle >= desiredAngle) {
-			Robot.oi.left.set(0);
-			Robot.oi.right.set(0);
+			Robot.drive.stop();
 		}
 		else {
-//			2.5 * (desiredAngle - angle) + 10
+			double rotateVal = 5; // 2.5 * (desiredAngle - angle) + 10
 			if (rotateRight) {
-				Robot.oi.left.set(5);
-				Robot.oi.right.set(-5);
+				Robot.drive.move(rotateVal, -rotateVal, ControlMode.Current);
 			}
 			else {
-				Robot.oi.left.set(-5);
-				Robot.oi.right.set(5);
+				Robot.drive.move(-rotateVal, rotateVal, ControlMode.Current);
 			}
 		}
 	}

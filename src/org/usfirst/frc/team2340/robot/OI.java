@@ -10,24 +10,26 @@ package org.usfirst.frc.team2340.robot;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
-import edu.wpi.first.wpilibj.Joystick;
+
+import org.usfirst.frc.team2340.robot.RobotMap;
 
 /**
  * This class is the glue that binds the controls on the physical operator
  * interface to the commands and command groups that allow control of the robot.
  */
 public class OI {
-	public Joystick driveController = new Joystick(RobotMap.DRIVE_PORT);
-	public Joystick acquisitionController = new Joystick(RobotMap.ACQUISITION_PORT);
+	public SuperJoystick driveController = new SuperJoystick(RobotMap.DRIVE_PORT);
+	public SuperJoystick acquisitionController = new SuperJoystick(RobotMap.ACQUISITION_PORT);
+
 	public ADXRS450_Gyro gyro = null;
 
 	public WPI_TalonSRX left = null;
 	public WPI_TalonSRX right = null;
 	public WPI_TalonSRX elevator = null;
-	public WPI_TalonSRX armone = null; 
-	public WPI_TalonSRX armtwo = null;
+	public WPI_TalonSRX armOne = null;
+	public WPI_TalonSRX armTwo = null;
 	public WPI_TalonSRX climbing = null;
-	
+
 	public final double CAM_VIEWING_ANGLE = 61.0;
 	public final double IMG_WIDTH = 640.0;
 	public final double IMG_HEIGHT = 480.0;
