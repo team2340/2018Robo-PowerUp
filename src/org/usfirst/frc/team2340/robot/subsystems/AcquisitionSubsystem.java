@@ -2,7 +2,7 @@ package org.usfirst.frc.team2340.robot.subsystems;
 
 import org.usfirst.frc.team2340.robot.Robot;
 import org.usfirst.frc.team2340.robot.RobotMap;
-import org.usfirst.frc.team2340.robot.commands.AcquisitionCommand;
+import org.usfirst.frc.team2340.robot.commands.Acquisition;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -91,6 +91,6 @@ public class AcquisitionSubsystem extends GenericSubsystem {
 	
 	@Override
 	protected void initDefaultCommand() {
-		setDefaultCommand(new AcquisitionCommand());
+		setDefaultCommand(new Acquisition());
 	}
 }
