@@ -6,10 +6,10 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class ArcadeDriveCommand extends Command {
+public class Driving extends Command {
 	private Joystick controller;
 	
-	public ArcadeDriveCommand(){
+	public Driving(){
 		requires(Robot.drive);
 		controller = Robot.oi.driveController;
 	}

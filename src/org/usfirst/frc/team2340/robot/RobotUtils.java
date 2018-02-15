@@ -11,11 +11,6 @@ public class RobotUtils {
 		ThreeScale
 	}
 	
-	public enum AutonomousState {
-		DriveForward,
-		Rotate
-	}
-	
 	private static double wheelDiameter = 1;
 	private static double lengthOfRobot = 0;
 	public static void lengthOfRobot(double _lengthOfRobot) {

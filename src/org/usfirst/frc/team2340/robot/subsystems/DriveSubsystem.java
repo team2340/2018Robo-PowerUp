@@ -2,7 +2,7 @@ package org.usfirst.frc.team2340.robot.subsystems;
 
 import org.usfirst.frc.team2340.robot.Robot;
 import org.usfirst.frc.team2340.robot.RobotMap;
-import org.usfirst.frc.team2340.robot.commands.ArcadeDriveCommand;
+import org.usfirst.frc.team2340.robot.commands.Driving;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -199,6 +199,6 @@ public class DriveSubsystem extends GenericSubsystem {
 	}
 
 	protected void initDefaultCommand() {
-		setDefaultCommand(new ArcadeDriveCommand());
+		setDefaultCommand(new Driving());
 	}
 }

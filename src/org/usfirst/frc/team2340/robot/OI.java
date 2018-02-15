@@ -18,8 +18,8 @@ import org.usfirst.frc.team2340.robot.RobotMap;
  * interface to the commands and command groups that allow control of the robot.
  */
 public class OI {
-	public SuperJoystick driveController = new SuperJoystick(RobotMap.DRIVE_PORT);
-	public SuperJoystick acquisitionController = new SuperJoystick(RobotMap.ACQUISITION_PORT);
+	public final SuperJoystick driveController = new SuperJoystick(RobotMap.DRIVE_PORT);
+	public final SuperJoystick acquisitionController = new SuperJoystick(RobotMap.ACQUISITION_PORT);
 
 	public ADXRS450_Gyro gyro = null;
 

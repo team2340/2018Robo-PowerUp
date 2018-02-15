@@ -6,9 +6,9 @@ import org.usfirst.frc.team2340.robot.RobotMap;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
 
-public class AcquisitionCommand extends Command {
+public class Acquisition extends Command {
 	private Joystick controller;
-	public AcquisitionCommand(){
+	public Acquisition(){
 		requires(Robot.acquisition);
 	}
 
