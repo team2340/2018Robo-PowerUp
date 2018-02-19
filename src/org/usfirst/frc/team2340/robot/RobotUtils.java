@@ -22,7 +22,7 @@ public class RobotUtils {
 		lengthOfRobot = _lengthOfRobot;
 	}
 	public static double getEncPositionFromIN(double distanceInInches) {
-		return (distanceInInches/(wheelDiameter * Math.PI))/360;
+		return (distanceInInches/(wheelDiameter * Math.PI))*1024*4;
 	}
 	public static double distanceMinusRobot(double distance){
 		return distance-lengthOfRobot ;

@@ -8,20 +8,19 @@ public class AutoArm extends Command {
 	long startTime = 0;
 	@Override
 	protected void initialize() {
+		Robot.myLogger.log("AutoArm","", "");
+
 		startTime = System.currentTimeMillis();
 	}
 	public  AutoArm( ) {
 	}
 	@Override
 	protected void execute() {
-		Robot.oi.armone.set(1); 
-		Robot.oi.armtwo.set(1);
-	}
+		Robot.arm.move(1);	}
 	@Override
 	protected boolean isFinished() {
 		if (System.currentTimeMillis() >= (startTime + 4000)) {
-			Robot.oi.armone.set(0); 
-			Robot.oi.armtwo.set(0);
+			Robot.arm.move(0);
 			return true;
 		}
 		else {

@@ -21,31 +21,36 @@ public class CameraCommand extends Command {
 	VideoSink server;
 	Mat source = new Mat();
 	Integer count=0;
-
-
+//	boolean started = false;
 
 	public CameraCommand(){
 		controller = Robot.oi.driveController;
-
 		int intcam0 = 0;
 		int intcam1 = 1;
 
-		camera0 = new UsbCamera("USB Camera " + intcam0, intcam0);    
+		camera0 = new UsbCamera("USB Camera " + intcam0, intcam0);
+		camera0.setResolution((int)Robot.oi.IMG_WIDTH, (int)Robot.oi.IMG_HEIGHT);
 		CameraServer.getInstance().addCamera(camera0);
-		server = CameraServer.getInstance().addServer("serve_" + camera0.getName());
 
-		camera1 = new UsbCamera("USB Camera " + intcam1, intcam1);    
+		camera1 = new UsbCamera("USB Camera " + intcam1, intcam1);
+		camera1.setResolution((int)Robot.oi.IMG_WIDTH, (int)Robot.oi.IMG_HEIGHT);
 		CameraServer.getInstance().addCamera(camera1);
 
 		curCam = camera0;
 		SmartDashboard.putString("Current Cam", curCam.getName());
 		buttonPressed = false;
 
-		server.setSource(camera0);
+		server = CameraServer.getInstance().addServer("serve_" + camera0.getName());
 	}
 	@Override
 	protected void initialize() {
-
+//		if(!started) {
+//			switchView();
+//			server.setSource(curCam);
+//			switchView();
+//			server.setSource(curCam);
+//			started = true;
+//		}
 	}
 
 	@Override
@@ -61,7 +66,6 @@ public class CameraCommand extends Command {
 		else
 		{
 			buttonPressed = false;
-
 		}
 		if(controller.getRawButton(RobotMap.BUTTON_2)){
 			if(!buttonHit) {
@@ -76,10 +80,7 @@ public class CameraCommand extends Command {
 		{
 			buttonHit = false;
 		}
-
 	}
-
-
 
 	@Override
 	protected boolean isFinished() {
@@ -88,14 +89,12 @@ public class CameraCommand extends Command {
 
 	@Override
 	protected void end() {
+//		started = false;
 	}
 
 	@Override
 	protected void interrupted() {
-
-	}
-	public UsbCamera getcamera(){
-		return curCam;
+//		started = false;
 	}
 
 	public void switchView(){

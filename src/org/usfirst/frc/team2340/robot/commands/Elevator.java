@@ -3,6 +3,8 @@ package org.usfirst.frc.team2340.robot.commands;
 import org.usfirst.frc.team2340.robot.Robot;
 import org.usfirst.frc.team2340.robot.RobotUtils;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -13,9 +15,12 @@ public class Elevator extends Command {
 
 	@Override
 	protected void initialize() {
+		Robot.myLogger.log("Elevator","desiredHeight", distance);
+		Robot.elevator.setEncoder(0);
+		
 		startTime = System.currentTimeMillis();
 		desiredHeight = RobotUtils.getEncPositionFromIN(distance);
-		Robot.oi.elevator.set(desiredHeight);
+		Robot.elevator.movePosition( desiredHeight);
 	}
 	public  Elevator(double wantedHeight) {
 		requires(Robot.drive);
@@ -24,14 +29,14 @@ public class Elevator extends Command {
 
 	@Override
 	protected void execute() {
-		SmartDashboard.putNumber("height position", Robot.oi.elevator.getSelectedSensorPosition(0));
-		if (Robot.oi.elevator.getSelectedSensorPosition(0) >= desiredHeight) {
-			Robot.oi.elevator.set(0);
-		}
+		Robot.myLogger.log("Elevator","height position",Robot.elevator.getEncoder());
+
+		SmartDashboard.putNumber("height position", Robot.elevator.getEncoder());
 	}
 	@Override
 	protected boolean isFinished() {
-		if (Robot.oi.elevator.getSelectedSensorPosition(0) >= desiredHeight) {
+		if (Robot.elevator.getEncoder() <= (desiredHeight + 50)
+			&& Robot.elevator.getEncoder() >= (desiredHeight - 50)) {
 			return true;
 		}
 		else {

@@ -1,7 +1,7 @@
 package org.usfirst.frc.team2340.robot.commands;
 
 import org.usfirst.frc.team2340.robot.Robot;
-import org.usfirst.frc.team2340.robot.RobotMap;
+//import org.usfirst.frc.team2340.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
@@ -73,18 +73,18 @@ public class ArcadeDriveCommand extends Command {
 		z = (3-controller.getZ())/2;
 		y = -controller.getY()/z;
 		x = controller.getX()/z; 
-		if(controller.getRawButton(RobotMap.BUTTON_2)){
-			if(button2Pressed){
-				
-			}
-			}
-			else{
-
-			}
+//		if(controller.getRawButton(RobotMap.BUTTON_2)){
+//			if(){
+//				button2Pressed
+//			}
+//			}
+//			else{
+//
+//			}
 
 
 		Robot.drive.setArcadeSpeed(x, y);
-		System.out.println("ArcadeSpeed x:"+x+" y:"+y);
+//		System.out.println("ArcadeSpeed x:"+x+" y:"+y);
 		
 	}
 
