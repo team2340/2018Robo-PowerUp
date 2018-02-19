@@ -1,5 +1,7 @@
 package org.usfirst.frc.team2340.robot;
 
+import org.usfirst.frc.team2340.robot.framework.Tuple;
+
 public class DriveCorrection {
 	Tuple<Double, Double> correction = new Tuple<>(0d, 0d);
 	

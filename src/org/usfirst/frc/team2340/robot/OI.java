@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 
 import org.usfirst.frc.team2340.robot.RobotMap;
+import org.usfirst.frc.team2340.robot.framework.SuperJoystick;
 
 /**
  * This class is the glue that binds the controls on the physical operator

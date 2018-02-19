@@ -1,4 +1,4 @@
-package org.usfirst.frc.team2340.robot;
+package org.usfirst.frc.team2340.robot.framework;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

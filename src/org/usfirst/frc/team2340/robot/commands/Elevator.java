@@ -1,10 +1,10 @@
 package org.usfirst.frc.team2340.robot.commands;
 
-import org.usfirst.frc.team2340.robot.ButtonAction;
 import org.usfirst.frc.team2340.robot.Robot;
 import org.usfirst.frc.team2340.robot.RobotMap;
 import org.usfirst.frc.team2340.robot.RobotUtils;
-import org.usfirst.frc.team2340.robot.SuperJoystick;
+import org.usfirst.frc.team2340.robot.framework.ButtonAction;
+import org.usfirst.frc.team2340.robot.framework.SuperJoystick;
 
 import edu.wpi.first.wpilibj.command.Command;
 

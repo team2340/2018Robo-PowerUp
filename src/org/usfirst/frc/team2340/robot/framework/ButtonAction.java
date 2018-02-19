@@ -1,4 +1,4 @@
-package org.usfirst.frc.team2340.robot;
+package org.usfirst.frc.team2340.robot.framework;
 
 public class ButtonAction {
 	public ButtonAction(int _button, Action _action) {

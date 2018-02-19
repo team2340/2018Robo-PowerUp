@@ -6,6 +6,7 @@ import org.usfirst.frc.team2340.robot.commands.AutoArm;
 import org.usfirst.frc.team2340.robot.commands.AutoDrive;
 import org.usfirst.frc.team2340.robot.commands.AutoElevator;
 import org.usfirst.frc.team2340.robot.commands.Camera;
+import org.usfirst.frc.team2340.robot.framework.DebugLogger;
 import org.usfirst.frc.team2340.robot.commands.AutoRotation;
 import org.usfirst.frc.team2340.robot.subsystems.*;
 
