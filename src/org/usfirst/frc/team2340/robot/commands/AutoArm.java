@@ -8,6 +8,8 @@ public class AutoArm extends Command {
 	long startTime = 0;
 	@Override
 	protected void initialize() {
+		Robot.myLogger.log("AutoArm","", "");
+
 		startTime = System.currentTimeMillis();
 	}
 	public  AutoArm( ) {

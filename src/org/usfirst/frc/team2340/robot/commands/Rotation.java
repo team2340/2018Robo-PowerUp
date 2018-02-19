@@ -12,45 +12,63 @@ public class Rotation extends Command {
 	double desiredAngle = 0;
 	boolean rotateRight;
 	double angle= 0;
+	double turnAngle=0;
 
-	public Rotation(double wantedAngle, boolean rightRotate) {
+	public Rotation(double wantedAngle) {
 		requires(Robot.drive);
 		desiredAngle = wantedAngle;
-		rotateRight = rightRotate;
 	}
 
 	@Override
 	protected void initialize() {
+		Robot.drive.setForSpeed();
+		Robot.myLogger.log("Rotation","desiredAngle", desiredAngle);
+		Robot.myLogger.log("Rotation","rotationDirection", (rotateRight) ? "right" : "left");
+		SmartDashboard.putNumber("Current angle: ", Robot.oi.gyro.getAngle());
+		System.out.println("Current angle: " + Robot.oi.gyro.getAngle());
+		turnAngle = desiredAngle - Robot.oi.gyro.getAngle();
+		Robot.oi.gyro.reset();
+		if (turnAngle >0 ) {
+			rotateRight = true;
+		}
+		else {
+			rotateRight = false;
+		}
 		startTime = System.currentTimeMillis();
 		Robot.oi.gyro.reset();
+		turnAngle = Math.abs(turnAngle);
 	}
 	
 	@Override
 	protected void execute() {
 		angle = Math.abs(Robot.oi.gyro.getAngle());
 		SmartDashboard.putNumber("Gyro angle", angle);
+		System.out.println("Gyro angle" + angle);
 
-		if (angle >= desiredAngle) {
+		if (angle >= turnAngle) {
 			Robot.drive.stop();
 		}
 		else {
-			double rotateVal = 5; // 2.5 * (desiredAngle - angle) + 10
+			double rotateSpeed = ((turnAngle - angle)/turnAngle)+700;
 			if (rotateRight) {
-				Robot.drive.move(rotateVal, -rotateVal, ControlMode.Current);
+				Robot.drive.move(rotateSpeed, -rotateSpeed, ControlMode.Velocity);
 			}
 			else {
-				Robot.drive.move(-rotateVal, rotateVal, ControlMode.Current);
+				Robot.drive.move(-rotateSpeed, rotateSpeed, ControlMode.Velocity);
 			}
 		}
 	}
 
 	@Override
 	protected boolean isFinished() {
-		if (angle >= desiredAngle) {
-			System.out.println("Auto Rotate Desired Angle: " + desiredAngle
+		if (angle >= turnAngle) {
+			System.out.println("Auto Rotate  TurningAngle: " + turnAngle
 					+ ", End Angle: " + angle
 					+ ", Right: " + rotateRight
 					+ ", Elapsed: " + (System.currentTimeMillis() - startTime)/1000);
+			Robot.drive.stop(); //TODO: Necessary?
+
+			Robot.oi.gyro.reset();
 			return true;
 		}
 		else {

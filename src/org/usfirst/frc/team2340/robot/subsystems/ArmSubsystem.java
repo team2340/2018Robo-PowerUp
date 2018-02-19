@@ -31,9 +31,6 @@ public class ArmSubsystem extends GenericSubsystem {
 	private void createArmOne() {
 		try {
 			Robot.oi.armOne = new WPI_TalonSRX(RobotMap.ARM_ONE_TAL_ID);
-			Robot.oi.armOne.configNominalOutputForward(0,0);
-			Robot.oi.armOne.configNominalOutputReverse(0,0);
-		    Robot.oi.armOne.selectProfileSlot(0,0);
 		} catch (Exception ex) {
 			System.out.println("createArmone FAILED");
 		}
@@ -41,9 +38,6 @@ public class ArmSubsystem extends GenericSubsystem {
 	private void createArmTwo() {
 		try {
 			Robot.oi.armTwo = new WPI_TalonSRX(RobotMap.ARM_TWO_TAL_ID);
-			Robot.oi.armTwo.configNominalOutputForward(0,0);
-			Robot.oi.armTwo.configNominalOutputReverse(0,0);
-		    Robot.oi.armTwo.selectProfileSlot(0,0);
 		} catch (Exception ex) {
 			System.out.println("createArmone FAILED");
 	

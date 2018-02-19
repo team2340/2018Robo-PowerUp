@@ -13,7 +13,7 @@ import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -26,13 +26,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * creating this project, you must also update the manifest file in the resource
  * directory.
  */
-public class Robot extends TimedRobot {
+public class Robot extends IterativeRobot {
 	public static final OI oi = new OI();
 	public static final DriveSubsystem drive = new DriveSubsystem();
 	public static final ArmSubsystem arm = new ArmSubsystem();
 	public static final ElevatorSubsystem elevator = new ElevatorSubsystem();
 	public static final ClimbingSubsystem climbing = new ClimbingSubsystem();
 	public static int lastTargets = 0;
+	public static final DebugLogger myLogger = new DebugLogger();
 
 	CommandGroup autonomousCommand = null;
 	Camera camera = null;
@@ -48,7 +49,10 @@ public class Robot extends TimedRobot {
 		RobotUtils.lengthOfRobot(39);
 		RobotUtils.setWheelDiameter(4);
 
+//		myLogger.open("/", "DebugLogger", ".csv");
+
 		oi.gyro = new ADXRS450_Gyro();
+		camera = new Camera();
 
 		autoMode.addDefault("DriveForward", AutoMode.DriveForward);
 		autoMode.addObject("Disabled", AutoMode.DISABLED);
@@ -77,9 +81,14 @@ public class Robot extends TimedRobot {
 	}
 
 	public void autonomousInit() {
+		oi.gyro.reset();
 		AutoMode am = (AutoMode) autoMode.getSelected();
 		autonomousCommand = new CommandGroup();
-
+        //TODO: Disable should be the ruler of all
+		if (DriverStation.getInstance().getGameSpecificMessage().isEmpty()) {
+			autonomousCommand.addSequential(new AutoDriveForward(135));
+		}
+		else {
 		if(am == AutoMode.DriveForward){
 			//Drive forward is relative to the back of the robot
 			autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(135)));
@@ -91,19 +100,19 @@ public class Robot extends TimedRobot {
 			{
 				DriveCorrection corr = new DriveCorrection();
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(168), corr, -1));
-				autonomousCommand.addSequential(new Rotation(90, false));
+				autonomousCommand.addSequential(new Rotation(-90));
 				autonomousCommand.addParallel(new AutoElevator(19));
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(55.56 + (.5 * RobotUtils.getLengthOfRobot()) + corr.getCorrection().x)));
 				autonomousCommand.addSequential(new AutoArm());
 			}
 			else {
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(228.735)));
-				autonomousCommand.addSequential(new Rotation(90, false));
+				autonomousCommand.addSequential(new Rotation(-90));
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(264 + (.5 * RobotUtils.getLengthOfRobot()))));
-				autonomousCommand.addSequential(new Rotation(90, false));
+				autonomousCommand.addSequential(new Rotation(-90));
 				autonomousCommand.addParallel(new AutoElevator(19));
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(88.735 + (.5 * RobotUtils.getLengthOfRobot()))));
-				autonomousCommand.addSequential(new Rotation(90, false));
+				autonomousCommand.addSequential(new Rotation(-90));
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(55.56 + (.5 * RobotUtils.getLengthOfRobot()))));
 				autonomousCommand.addSequential(new AutoArm());
 			}
@@ -114,19 +123,19 @@ public class Robot extends TimedRobot {
 			if(gameData.charAt(1) == 'R')
 			{
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(340.5)));
-				autonomousCommand.addSequential(new Rotation(90, false));
+				autonomousCommand.addSequential(new Rotation(-90));
 				autonomousCommand.addParallel(new AutoElevator(51));
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(42.06 + (.5 * RobotUtils.getLengthOfRobot()))));
 				autonomousCommand.addSequential(new AutoArm());
 			}
 			else {
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(228.735)));
-				autonomousCommand.addSequential(new Rotation(90, false));
+				autonomousCommand.addSequential(new Rotation(-90));
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(264 + (.5 * RobotUtils.getLengthOfRobot()))));
-				autonomousCommand.addSequential(new Rotation(90, true));
+				autonomousCommand.addSequential(new Rotation(90));
 				autonomousCommand.addParallel(new AutoElevator(51));
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(106.265 + (.5 * RobotUtils.getLengthOfRobot()))));
-				autonomousCommand.addSequential(new Rotation(90, true));
+				autonomousCommand.addSequential(new Rotation(90));
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(42.06 + (.5 * RobotUtils.getLengthOfRobot()))));
 				autonomousCommand.addSequential(new AutoArm());
 			}
@@ -149,18 +158,18 @@ public class Robot extends TimedRobot {
 			if(gameData.charAt(0) == 'R')
 			{
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(228.735)));
-				autonomousCommand.addSequential(new Rotation (90, true));
+				autonomousCommand.addSequential(new Rotation (90));
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(264+(.5*RobotUtils.getLengthOfRobot()))));
-				autonomousCommand.addSequential(new Rotation (90, true));
+				autonomousCommand.addSequential(new Rotation (90));
 				autonomousCommand.addParallel(new AutoElevator(19));
 				autonomousCommand.addSequential(new AutoDriveForward (88.735+(.5*RobotUtils.getLengthOfRobot())));
-				autonomousCommand.addSequential(new Rotation (90, true));
+				autonomousCommand.addSequential(new Rotation (90));
 				autonomousCommand.addSequential(new AutoDriveForward (55.56+(.5*RobotUtils.getLengthOfRobot())));
 				autonomousCommand.addSequential(new AutoArm ( ));
 			}
 			else {
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(168)));
-				autonomousCommand.addSequential(new Rotation (90, true));
+				autonomousCommand.addSequential(new Rotation (90));
 				autonomousCommand.addParallel(new AutoElevator(19));
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(55.56+(.5*RobotUtils.getLengthOfRobot()))));
 				autonomousCommand.addSequential(new AutoArm ( ));
@@ -172,25 +181,26 @@ public class Robot extends TimedRobot {
 			if(gameData.charAt(1) == 'R')
 			{
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(228.735)));
-				autonomousCommand.addSequential(new Rotation (90, true));
+				autonomousCommand.addSequential(new Rotation (90));
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(264+(.5*RobotUtils.getLengthOfRobot()))));
-				autonomousCommand.addSequential(new Rotation (90, false));
+				autonomousCommand.addSequential(new Rotation (-90));
 				autonomousCommand.addParallel(new AutoElevator(51));
 				autonomousCommand.addSequential(new AutoDriveForward (106.265+(.5*RobotUtils.getLengthOfRobot())));
-				autonomousCommand.addSequential(new Rotation (90, false));
+				autonomousCommand.addSequential(new Rotation (-90));
 				autonomousCommand.addSequential(new AutoDriveForward (42.06+(.5*RobotUtils.getLengthOfRobot())));
 				autonomousCommand.addSequential(new AutoArm ( ));
 
 			}
 			else {
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(340.5)));
-				autonomousCommand.addSequential(new Rotation (90,true));
+				autonomousCommand.addSequential(new Rotation (90));
 				autonomousCommand.addParallel(new AutoElevator(51));
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(41.88+(.5*RobotUtils.getLengthOfRobot()))));
 				autonomousCommand.addSequential(new AutoArm ( ));
 			}
 		}
 		else if (am == AutoMode.DISABLED) {} //Do Nothing if disabled
+		}
 
 		System.out.println(am);
 		if (autonomousCommand != null) autonomousCommand.start();

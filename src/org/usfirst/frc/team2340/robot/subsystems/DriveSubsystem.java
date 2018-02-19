@@ -13,20 +13,25 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
 public class DriveSubsystem extends GenericSubsystem {
 	DifferentialDrive robotDrive;
-	public double speedP = 7.0;
-	public double speedI = 0.005;
+	public double centerX;
+	public double finalDistance;
+	public double speedP = 1.5;
+	public double speedI = 0.0;
 	public double speedD = 0.0;
-	public double speedF = 0.0;
-	public double speedMaxOutput = 350;
-	public double speedPeakOutputVoltage = 1.0f;
+	public double speedF = 0.001;
+	public double speedPeakOutputVoltage = 1f;
 	
 	public double positionP = 1.5;
-	public double positionI = .0001;
-	public double positionD = 0.0;
-	public double positionF = 0.0;
-	public float positionPeakOutputVoltage = 5.0f/12.0f;
+	//public double positionI = 0.0001;
+	//public double positionD = 10.0;
 	
-	public double vBusMaxOutput = 1.0;
+	public double positionI = 0.000;
+		public double positionD = 0.0;
+	public double positionF = 0.0;
+	public float positionPeakOutputVoltage = 10.0f/12.0f;
+	
+	public double vBusMaxOutput = 1.0; //An output multiplier
+	public double vBusPeakOutputVoltage = 1f; //the peak output (between 0 and 1)
 
 	public DriveSubsystem() {
 		createLeftSide();
@@ -40,8 +45,6 @@ public class DriveSubsystem extends GenericSubsystem {
 		try {
 			Robot.oi.left = new WPI_TalonSRX(RobotMap.LEFT_TAL_ID);
 			Robot.oi.left.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
-			Robot.oi.left.configNominalOutputForward(0, 0);
-			Robot.oi.left.configNominalOutputReverse(0, 0);
 			Robot.oi.left.selectProfileSlot(0, 0);
 			Robot.oi.left.setSensorPhase(true);
 		}
@@ -55,8 +58,6 @@ public class DriveSubsystem extends GenericSubsystem {
 			Robot.oi.right = new WPI_TalonSRX(RobotMap.RIGHT_TAL_ID);
 
 			Robot.oi.right.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
-			Robot.oi.right.configNominalOutputForward(0, 0);
-			Robot.oi.right.configNominalOutputReverse(0, 0);
 			Robot.oi.right.selectProfileSlot(0, 0);
 			Robot.oi.left.setSensorPhase(true);
 		}
@@ -66,19 +67,16 @@ public class DriveSubsystem extends GenericSubsystem {
 	}
 
 	private void setForSpeed() {
-		Robot.oi.left.set(ControlMode.Current, 0);
-		Robot.oi.right.set(ControlMode.Current, 0);
-		Robot.oi.right.selectProfileSlot(0, 0);
+		Robot.oi.left.set(ControlMode.Velocity, 0);
+		Robot.oi.right.set(ControlMode.Velocity, 0);
 		Robot.oi.right.config_kF(0, speedF, 0);
 		Robot.oi.right.config_kP(0, speedP, 0);
 		Robot.oi.right.config_kI(0, speedI, 0);
 		Robot.oi.right.config_kD(0, speedD, 0);
-		Robot.oi.left.selectProfileSlot(0, 0);
 		Robot.oi.left.config_kF(0, speedF, 0);
 		Robot.oi.left.config_kP(0, speedP, 0);
 		Robot.oi.left.config_kI(0, speedI, 0);
 		Robot.oi.left.config_kD(0, speedD, 0);
-		robotDrive.setMaxOutput(speedMaxOutput);
 		Robot.oi.left.configPeakOutputForward(speedPeakOutputVoltage, 0);
 		Robot.oi.left.configPeakOutputReverse(-speedPeakOutputVoltage, 0);
 		Robot.oi.right.configPeakOutputForward(speedPeakOutputVoltage, 0);
@@ -95,12 +93,10 @@ public class DriveSubsystem extends GenericSubsystem {
 	private void setForPosition() {
 		Robot.oi.left.set(ControlMode.Position, 0);
 		Robot.oi.right.set(ControlMode.Position, 0);
-		Robot.oi.right.selectProfileSlot(0, 0);
 		Robot.oi.right.config_kF(0, positionF, 0);
 		Robot.oi.right.config_kP(0, positionP, 0);
 		Robot.oi.right.config_kI(0, positionI, 0);
 		Robot.oi.right.config_kD(0, positionD, 0);
-		Robot.oi.left.selectProfileSlot(0, 0);
 		Robot.oi.left.config_kF(0, positionF, 0);
 		Robot.oi.left.config_kP(0, positionP, 0);
 		Robot.oi.left.config_kI(0, positionI, 0);
