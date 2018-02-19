@@ -31,9 +31,10 @@ public class AutoRotation extends Command {
 		}
 		turnAngle = Math.abs(turnAngle);
 
-		Robot.myLogger.log("Rotation", "Desired Angle", desiredAngle);
-		Robot.myLogger.log("Rotation", "Turn Angle", turnAngle);
-		Robot.myLogger.log("Rotation", "Rotation Direction", (rotateRight) ? "right" : "left");
+		Robot.myLogger.log("AutoRotation", "Start");
+		Robot.myLogger.log("AutoRotation", "Desired Angle", desiredAngle);
+		Robot.myLogger.log("AutoRotation", "Turn Angle", turnAngle);
+		Robot.myLogger.log("AutoRotation", "Rotation Direction", (rotateRight) ? "right" : "left");
 		Robot.myLogger.log("Gyro", "Current Angle", Robot.oi.gyro.getAngle());
 		SmartDashboard.putNumber("Current angle: ", Robot.oi.gyro.getAngle());
 		
@@ -58,8 +59,8 @@ public class AutoRotation extends Command {
 	@Override
 	protected boolean isFinished() {
 		if (angle >= turnAngle) {
-			Robot.myLogger.log("Rotation", "End Angle", angle);
-			Robot.myLogger.log("Rotation", "Elapsed", (System.currentTimeMillis() - startTime) / 1000);
+			Robot.myLogger.log("AutoRotation", "End Angle", angle);
+			Robot.myLogger.log("AutoRotation", "Elapsed", (System.currentTimeMillis() - startTime) / 1000);
 			Robot.myLogger.logBreak();
 			Robot.drive.stop();
 			Robot.oi.gyro.reset(); //Necessary? Yes, if we want to stay absolute!

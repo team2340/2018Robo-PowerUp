@@ -21,7 +21,7 @@ public class AutoElevator extends Command {
 		startTime = System.currentTimeMillis();
 		desiredHeight = RobotUtils.getEncPositionFromIN(distance);
 		Robot.elevator.movePosition(desiredHeight);
-		Robot.myLogger.log("AutoElevator", "", "");
+		Robot.myLogger.log("AutoElevator", "Start");
 		Robot.myLogger.log("AutoElevator", "Desired Distance (in)", distance);
 		Robot.myLogger.log("AutoElevator", "Desired Position", desiredHeight);
 	}

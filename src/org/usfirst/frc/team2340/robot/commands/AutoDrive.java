@@ -9,22 +9,22 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class AutoDriveForward extends Command {
+public class AutoDrive extends Command {
 	long startTime = 0;
 	double distanceEncoder = 0;
 	double distanceInches = 0;
 	DriveCorrection corr = null;
 	double gyroCorrLimit;
 
-	public AutoDriveForward(double _howFar) {
+	public AutoDrive(double _howFar) {
 		this(_howFar, null);
 	}
 
-	public AutoDriveForward(double _howFar, DriveCorrection _corr) {
+	public AutoDrive(double _howFar, DriveCorrection _corr) {
 		this(_howFar, _corr, -1);
 	}
 
-	public AutoDriveForward(double _howFar, DriveCorrection _corr, double _gyroCorrLimit) {
+	public AutoDrive(double _howFar, DriveCorrection _corr, double _gyroCorrLimit) {
 		requires(Robot.drive);
 		distanceInches = _howFar;
 		corr = _corr;
@@ -35,7 +35,7 @@ public class AutoDriveForward extends Command {
 	protected void initialize() {
 		startTime = System.currentTimeMillis();
 		distanceEncoder = RobotUtils.getEncPositionFromIN(distanceInches);
-		Robot.myLogger.log("AutoDrive", "", "");
+		Robot.myLogger.log("AutoDrive", "Start");
 		Robot.myLogger.log("AutoDrive", "Desired Distance (in)", distanceInches);
 		Robot.myLogger.log("AutoDrive", "Desired Position", RobotUtils.distanceMinusRobot(distanceInches));
 		Robot.drive.resetEncoders(); // TODO: do we have to reset the encoders?
