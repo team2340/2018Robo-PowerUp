@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class CameraCommand extends Command {
+public class Camera extends Command {
 	UsbCamera curCam, camera0, camera1;
 	Joystick controller;
 	boolean buttonPressed = false;
@@ -24,7 +24,7 @@ public class CameraCommand extends Command {
 
 
 
-	public CameraCommand(){
+	public Camera(){
 		controller = Robot.oi.driveController;
 
 		int intcam0 = 0;

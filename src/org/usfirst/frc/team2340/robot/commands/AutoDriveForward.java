@@ -1,5 +1,6 @@
 package org.usfirst.frc.team2340.robot.commands;
 
+import org.usfirst.frc.team2340.robot.DriveCorrection;
 import org.usfirst.frc.team2340.robot.Robot;
 import org.usfirst.frc.team2340.robot.RobotUtils;
 
@@ -10,10 +11,22 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class AutoDriveForward extends Command {
 	double desiredSpot = 0;
+	DriveCorrection corr = null;
+	double gyroCorrLimit;
 
 	public AutoDriveForward(double _howFar) {
+		this(_howFar, null);
+	}
+	
+	public AutoDriveForward(double _howFar, DriveCorrection _corr) {
+		this(_howFar, _corr, -1);
+	}
+	
+	public AutoDriveForward(double _howFar, DriveCorrection _corr, double _gyroCorrLimit) {
 		requires(Robot.drive);
-		desiredSpot = RobotUtils.getEncPositionFromIN(RobotUtils.distanceMinusRobot(_howFar));
+		desiredSpot = RobotUtils.getEncPositionFromIN(_howFar);
+		corr = _corr;
+		gyroCorrLimit = _gyroCorrLimit;
 	}
 
 	@Override
@@ -39,6 +52,9 @@ public class AutoDriveForward extends Command {
 	protected boolean isFinished() {
 		if(Robot.drive.getLeftEncoderValue() >= desiredSpot
 		   && Robot.drive.getRightEncoderValue() >= desiredSpot) {
+			if(corr != null) {
+				corr.correction(desiredSpot, Robot.oi.gyro.getAngle(), gyroCorrLimit);
+			}
 			Robot.drive.resetEncoders();
 			return true; 
 		}

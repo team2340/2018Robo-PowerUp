@@ -2,7 +2,7 @@ package org.usfirst.frc.team2340.robot.subsystems;
 
 import org.usfirst.frc.team2340.robot.Robot;
 import org.usfirst.frc.team2340.robot.RobotMap;
-import org.usfirst.frc.team2340.robot.commands.Acquisition;
+import org.usfirst.frc.team2340.robot.commands.Arm;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -11,12 +11,12 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
-public class AcquisitionSubsystem extends GenericSubsystem {
+public class ArmSubsystem extends GenericSubsystem {
 	private Compressor compressor;
 	private Solenoid festioSolenoid;
 	private Solenoid festioSolenoid2;
 	
-	public AcquisitionSubsystem() {
+	public ArmSubsystem() {
 		createArmOne();
 		createArmTwo();
 		compressor = new Compressor();
@@ -91,6 +91,6 @@ public class AcquisitionSubsystem extends GenericSubsystem {
 	
 	@Override
 	protected void initDefaultCommand() {
-		setDefaultCommand(new Acquisition());
+		setDefaultCommand(new Arm());
 	}
 }

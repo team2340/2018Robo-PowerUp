@@ -6,10 +6,10 @@ import org.usfirst.frc.team2340.robot.RobotMap;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
 
-public class Acquisition extends Command {
+public class Arm extends Command {
 	private Joystick controller;
-	public Acquisition(){
-		requires(Robot.acquisition);
+	public Arm(){
+		requires(Robot.arm);
 	}
 
 	@Override
@@ -23,21 +23,21 @@ public class Acquisition extends Command {
 
 		if (controller.getRawButton(RobotMap.BUTTON_3) && (!controller.getRawButton(RobotMap.BUTTON_1))) {
 			if (z != 0) {
-				Robot.acquisition.move(z);
+				Robot.arm.move(z);
 			}
 		}
 		else if (controller.getRawButton(RobotMap.BUTTON_3) && (controller.getRawButton(RobotMap.BUTTON_1))) {
 			if (z != 0) {
-				Robot.acquisition.move(-z);
+				Robot.arm.move(-z);
 			}
 		}
 		else {
-			Robot.acquisition.move(0);
+			Robot.arm.move(0);
 		}
 
 		if (controller.getRawButton(RobotMap.BUTTON_7)) {
 			if (!controller.getRawButtonPressed(RobotMap.BUTTON_7)) {
-				Robot.acquisition.toggle();
+				Robot.arm.toggle();
 			}
 		}
 	}

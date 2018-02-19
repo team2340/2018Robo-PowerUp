@@ -14,12 +14,12 @@ public class AutoArm extends Command {
 	}
 	@Override
 	protected void execute() {
-		Robot.acquisition.move(1);
+		Robot.arm.move(1);
 	}
 	@Override
 	protected boolean isFinished() {
 		if (System.currentTimeMillis() >= (startTime + 4000)) {
-			Robot.acquisition.stop(); 
+			Robot.arm.stop(); 
 			return true;
 		}
 		else {
