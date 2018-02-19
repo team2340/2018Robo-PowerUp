@@ -9,7 +9,6 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
-import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
 public class DriveSubsystem extends GenericSubsystem {
@@ -44,6 +43,7 @@ public class DriveSubsystem extends GenericSubsystem {
 			Robot.oi.left.configNominalOutputForward(0, 0);
 			Robot.oi.left.configNominalOutputReverse(0, 0);
 			Robot.oi.left.selectProfileSlot(0, 0);
+			Robot.oi.left.setSensorPhase(true);
 		}
 		catch (Exception ex) {
 			System.out.println("createLeftSide FAILED");
@@ -58,6 +58,7 @@ public class DriveSubsystem extends GenericSubsystem {
 			Robot.oi.right.configNominalOutputForward(0, 0);
 			Robot.oi.right.configNominalOutputReverse(0, 0);
 			Robot.oi.right.selectProfileSlot(0, 0);
+			Robot.oi.left.setSensorPhase(true);
 		}
 		catch (Exception ex) {
 			System.out.println("createRightSide FAILED");
