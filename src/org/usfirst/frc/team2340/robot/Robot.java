@@ -6,7 +6,7 @@ import org.usfirst.frc.team2340.robot.commands.AutoArm;
 import org.usfirst.frc.team2340.robot.commands.AutoDriveForward;
 import org.usfirst.frc.team2340.robot.commands.AutoElevator;
 import org.usfirst.frc.team2340.robot.commands.Camera;
-import org.usfirst.frc.team2340.robot.commands.Rotation;
+import org.usfirst.frc.team2340.robot.commands.AutoRotation;
 import org.usfirst.frc.team2340.robot.subsystems.*;
 
 import edu.wpi.cscore.UsbCamera;
@@ -100,19 +100,19 @@ public class Robot extends IterativeRobot {
 			{
 				DriveCorrection corr = new DriveCorrection();
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(168), corr, -1));
-				autonomousCommand.addSequential(new Rotation(-90));
+				autonomousCommand.addSequential(new AutoRotation(-90));
 				autonomousCommand.addParallel(new AutoElevator(19));
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(55.56 + (.5 * RobotUtils.getLengthOfRobot()) + corr.getCorrection().x)));
 				autonomousCommand.addSequential(new AutoArm());
 			}
 			else {
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(228.735)));
-				autonomousCommand.addSequential(new Rotation(-90));
+				autonomousCommand.addSequential(new AutoRotation(-90));
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(264 + (.5 * RobotUtils.getLengthOfRobot()))));
-				autonomousCommand.addSequential(new Rotation(-90));
+				autonomousCommand.addSequential(new AutoRotation(-90));
 				autonomousCommand.addParallel(new AutoElevator(19));
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(88.735 + (.5 * RobotUtils.getLengthOfRobot()))));
-				autonomousCommand.addSequential(new Rotation(-90));
+				autonomousCommand.addSequential(new AutoRotation(-90));
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(55.56 + (.5 * RobotUtils.getLengthOfRobot()))));
 				autonomousCommand.addSequential(new AutoArm());
 			}
@@ -123,19 +123,19 @@ public class Robot extends IterativeRobot {
 			if(gameData.charAt(1) == 'R')
 			{
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(340.5)));
-				autonomousCommand.addSequential(new Rotation(-90));
+				autonomousCommand.addSequential(new AutoRotation(-90));
 				autonomousCommand.addParallel(new AutoElevator(51));
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(42.06 + (.5 * RobotUtils.getLengthOfRobot()))));
 				autonomousCommand.addSequential(new AutoArm());
 			}
 			else {
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(228.735)));
-				autonomousCommand.addSequential(new Rotation(-90));
+				autonomousCommand.addSequential(new AutoRotation(-90));
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(264 + (.5 * RobotUtils.getLengthOfRobot()))));
-				autonomousCommand.addSequential(new Rotation(90));
+				autonomousCommand.addSequential(new AutoRotation(90));
 				autonomousCommand.addParallel(new AutoElevator(51));
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(106.265 + (.5 * RobotUtils.getLengthOfRobot()))));
-				autonomousCommand.addSequential(new Rotation(90));
+				autonomousCommand.addSequential(new AutoRotation(90));
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(42.06 + (.5 * RobotUtils.getLengthOfRobot()))));
 				autonomousCommand.addSequential(new AutoArm());
 			}
@@ -158,18 +158,18 @@ public class Robot extends IterativeRobot {
 			if(gameData.charAt(0) == 'R')
 			{
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(228.735)));
-				autonomousCommand.addSequential(new Rotation (90));
+				autonomousCommand.addSequential(new AutoRotation (90));
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(264+(.5*RobotUtils.getLengthOfRobot()))));
-				autonomousCommand.addSequential(new Rotation (90));
+				autonomousCommand.addSequential(new AutoRotation (90));
 				autonomousCommand.addParallel(new AutoElevator(19));
 				autonomousCommand.addSequential(new AutoDriveForward (88.735+(.5*RobotUtils.getLengthOfRobot())));
-				autonomousCommand.addSequential(new Rotation (90));
+				autonomousCommand.addSequential(new AutoRotation (90));
 				autonomousCommand.addSequential(new AutoDriveForward (55.56+(.5*RobotUtils.getLengthOfRobot())));
 				autonomousCommand.addSequential(new AutoArm ( ));
 			}
 			else {
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(168)));
-				autonomousCommand.addSequential(new Rotation (90));
+				autonomousCommand.addSequential(new AutoRotation (90));
 				autonomousCommand.addParallel(new AutoElevator(19));
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(55.56+(.5*RobotUtils.getLengthOfRobot()))));
 				autonomousCommand.addSequential(new AutoArm ( ));
@@ -181,19 +181,19 @@ public class Robot extends IterativeRobot {
 			if(gameData.charAt(1) == 'R')
 			{
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(228.735)));
-				autonomousCommand.addSequential(new Rotation (90));
+				autonomousCommand.addSequential(new AutoRotation (90));
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(264+(.5*RobotUtils.getLengthOfRobot()))));
-				autonomousCommand.addSequential(new Rotation (-90));
+				autonomousCommand.addSequential(new AutoRotation (-90));
 				autonomousCommand.addParallel(new AutoElevator(51));
 				autonomousCommand.addSequential(new AutoDriveForward (106.265+(.5*RobotUtils.getLengthOfRobot())));
-				autonomousCommand.addSequential(new Rotation (-90));
+				autonomousCommand.addSequential(new AutoRotation (-90));
 				autonomousCommand.addSequential(new AutoDriveForward (42.06+(.5*RobotUtils.getLengthOfRobot())));
 				autonomousCommand.addSequential(new AutoArm ( ));
 
 			}
 			else {
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(340.5)));
-				autonomousCommand.addSequential(new Rotation (90));
+				autonomousCommand.addSequential(new AutoRotation (90));
 				autonomousCommand.addParallel(new AutoElevator(51));
 				autonomousCommand.addSequential(new AutoDriveForward(RobotUtils.distanceMinusRobot(41.88+(.5*RobotUtils.getLengthOfRobot()))));
 				autonomousCommand.addSequential(new AutoArm ( ));
@@ -209,8 +209,8 @@ public class Robot extends IterativeRobot {
 	}
 
 	public void autonomousPeriodic() {
-		SmartDashboard.putNumber("left position", Robot.drive.getLeftEncoderValue());
-		SmartDashboard.putNumber("right position ",Robot.drive.getRightEncoderValue()); 
+		SmartDashboard.putNumber("left position", Robot.drive.getLeftEncoder());
+		SmartDashboard.putNumber("right position ",Robot.drive.getRightEncoder()); 
 		Scheduler.getInstance().run();
 	}
 
@@ -219,8 +219,8 @@ public class Robot extends IterativeRobot {
 	}
 
 	public void teleopPeriodic() {
-		SmartDashboard.putNumber("left position", Robot.drive.getLeftEncoderValue());
-		SmartDashboard.putNumber("right position ",Robot.drive.getRightEncoderValue()); 
+		SmartDashboard.putNumber("left position", Robot.drive.getLeftEncoder());
+		SmartDashboard.putNumber("right position ",Robot.drive.getRightEncoder()); 
 		Scheduler.getInstance().run();
 	}
 

@@ -3,8 +3,6 @@ package org.usfirst.frc.team2340.robot.commands;
 import org.usfirst.frc.team2340.robot.Robot;
 import org.usfirst.frc.team2340.robot.RobotUtils;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -22,29 +20,38 @@ public class AutoElevator extends Command {
 	protected void initialize() {
 		startTime = System.currentTimeMillis();
 		desiredHeight = RobotUtils.getEncPositionFromIN(distance);
-		Robot.elevator.move(desiredHeight, ControlMode.Position);
+		Robot.elevator.movePosition(desiredHeight);
+		Robot.myLogger.log("AutoElevator", "", "");
+		Robot.myLogger.log("AutoElevator", "Desired Distance (in)", distance);
+		Robot.myLogger.log("AutoElevator", "Desired Position", desiredHeight);
 	}
 
 	@Override
 	protected void execute() {
-		SmartDashboard.putNumber("height position", Robot.elevator.getEncoderValue());
-		if (Robot.elevator.getEncoderValue() >= desiredHeight) {
-			Robot.elevator.stop();
-		}
+		SmartDashboard.putNumber("height position", Robot.elevator.getEncoder());
+		Robot.myLogger.log("AutoElevator", "Encoder", Robot.elevator.getEncoder());
 	}
 	
 	protected void interrupted() {
-		System.out.println("Interrupted!");
+		Robot.myLogger.log("AutoElevator","Interrupted!");
 		Robot.elevator.stop();
+	}
+	
+	protected boolean done() {
+		int position = Math.abs(Robot.elevator.getEncoder());
+
+		if (position <= desiredHeight + 2500 && position >= desiredHeight - 2500) {
+			Robot.myLogger.log("AutoElevator", "Complete");
+			Robot.myLogger.log("AutoElevator", "Encoder", Robot.elevator.getEncoder());
+			Robot.myLogger.log("AutoElevator", "Elapsed", (System.currentTimeMillis() - startTime) / 1000);
+			Robot.myLogger.logBreak();
+			return true;
+		}
+		return false;
 	}
 	
 	@Override
 	protected boolean isFinished() {
-		if (Robot.elevator.getEncoderValue() >= desiredHeight) {
-			return true;
-		}
-		else {
-			return false;
-		}
+		return done();
 	}
 }

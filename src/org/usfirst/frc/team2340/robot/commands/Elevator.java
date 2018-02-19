@@ -6,8 +6,6 @@ import org.usfirst.frc.team2340.robot.RobotMap;
 import org.usfirst.frc.team2340.robot.RobotUtils;
 import org.usfirst.frc.team2340.robot.SuperJoystick;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-
 import edu.wpi.first.wpilibj.command.Command;
 
 public class Elevator extends Command {
@@ -22,17 +20,17 @@ public class Elevator extends Command {
 		controller = Robot.oi.acquisitionController;
 
 		controller.toggleWhenPressed(
-				new AutoElevator(RobotUtils.getEncPositionFromIN(77) - Robot.elevator.getEncoderValue()),
+				new AutoElevator(RobotUtils.getEncPositionFromIN(77) - Robot.elevator.getEncoder()),
 				new ButtonAction(RobotMap.BUTTON_4, ButtonAction.Action.Pressed),
 				new ButtonAction(RobotMap.BUTTON_1, ButtonAction.Action.NotPressed));
 		
 		controller.toggleWhenPressed(
-				new AutoElevator(Robot.elevator.getEncoderValue()*-1),
+				new AutoElevator(Robot.elevator.getEncoder()*-1),
 				new ButtonAction(RobotMap.BUTTON_4, ButtonAction.Action.Pressed),
 				new ButtonAction(RobotMap.BUTTON_1, ButtonAction.Action.Pressed));
 		
 		controller.toggleWhenPressed(
-				new AutoElevator(RobotUtils.getEncPositionFromIN(19)-Robot.elevator.getEncoderValue()),
+				new AutoElevator(RobotUtils.getEncPositionFromIN(19)-Robot.elevator.getEncoder()),
 				new ButtonAction(RobotMap.BUTTON_6, ButtonAction.Action.Pressed),
 				new ButtonAction(RobotMap.BUTTON_1, ButtonAction.Action.NotPressed));
 	}
@@ -41,13 +39,13 @@ public class Elevator extends Command {
 	protected void execute() {
 		double y = -controller.getY();
 		if (y != 0) {
-			Robot.elevator.move(y, ControlMode.PercentOutput);
+			Robot.elevator.move(y);
 		}
 		else if (controller.getRawButton(RobotMap.BUTTON_5) && (!controller.getRawButton(RobotMap.BUTTON_1))) {
-			Robot.elevator.up(1, ControlMode.PercentOutput);
+			Robot.elevator.up(1);
 		}
 		else if (controller.getRawButton(RobotMap.BUTTON_5) && (controller.getRawButton(RobotMap.BUTTON_1))) {
-			Robot.elevator.down(-1, ControlMode.PercentOutput);
+			Robot.elevator.down(-1);
 		}
 		else {
 			Robot.elevator.stop();

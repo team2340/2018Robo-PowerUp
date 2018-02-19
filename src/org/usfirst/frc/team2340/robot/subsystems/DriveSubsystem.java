@@ -164,33 +164,33 @@ public class DriveSubsystem extends GenericSubsystem {
 		move(0, ControlMode.PercentOutput);
 	}
 
-	public int getLeftEncoderValue() {
+	public int getLeftEncoder() {
 		return Robot.oi.left.getSelectedSensorPosition(0);
 	}
 	
-	public int getRightEncoderValue() {
+	public int getRightEncoder() {
 		return -Robot.oi.right.getSelectedSensorPosition(0); //XXX: Inverted due to inverted motor
 	}
 	
 	public void resetEncoders() {
-		setLeftEncoderValue(0);
-		setRightEncoderValue(0);
+		setLeftEncoder(0);
+		setRightEncoder(0);
 	}
 	
-	public void setLeftEncoderValue(int _val) {
+	public void setLeftEncoder(int _val) {
 		Robot.oi.left.setSelectedSensorPosition(_val, 0, 0);
 	}
 	
-	public void setRightEncoderValue(int _val) {
+	public void setRightEncoder(int _val) {
 		Robot.oi.right.setSelectedSensorPosition(_val, 0, 0);
 	}
 	
 	@Override
-	public int getEncoderValue(int _id) {
+	public int getEncoder(int _id) {
 		if (_id == Robot.oi.left.getBaseID())
-			return getLeftEncoderValue();
+			return getLeftEncoder();
 		else if (_id == Robot.oi.right.getBaseID())
-			return getRightEncoderValue();
+			return getRightEncoder();
 		else
 			return 0;
 	}

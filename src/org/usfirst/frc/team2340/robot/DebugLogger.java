@@ -34,7 +34,6 @@ class LogFormat extends Formatter {
 }
 
 public class DebugLogger {
-//	private String filePath, fileName;
 	private Logger log = null;
 	private FileHandler fh = null;
 	private final LogFormat logFormat = new LogFormat();
@@ -55,33 +54,41 @@ public class DebugLogger {
 	
 	synchronized public void log(String _object, String _event, String _data)
 	{
-//		System.out.println("Logging: "+_data);'
-		if(log != null) {
-		LogRecord lr = new LogRecord(Level.INFO, _data);
-		//Note: Re-purposed the sourceClassName and SourceMethodName.
-		lr.setSourceClassName(_object);
-		lr.setSourceMethodName(_event);
-		log.log(lr);
+		if (log != null) {
+			LogRecord lr = new LogRecord(Level.INFO, _data);
+			// Note: Re-purposed the sourceClassName and SourceMethodName.
+			lr.setSourceClassName(_object);
+			lr.setSourceMethodName(_event);
+			log.log(lr);
 		}
+		else {
+			System.out.println(_object+" "+_event+": "+_data);
+		}
+	}
+	
+	synchronized public void log(String _object, String _event)
+	{
+		log(_object, _event, "");
 	}
 	
 	synchronized public void log(String _object, String _event, Double _data, int _precision)
 	{
-//		System.out.println("Logging Double");
 		String data = BigDecimal.valueOf(_data).setScale(_precision, RoundingMode.HALF_UP).toString();
 		log(_object, _event, data);
 	}
 	
 	synchronized public void log(String _object, String _event, Float _data, int _precision)
 	{
-//		System.out.println("Logging Float");
 		log(_object, _event, _data.doubleValue(), _precision);
 	}
 	
 	synchronized public void log(String _object, String _event, Number _data)
 	{
-//		System.out.println("Logging Number");
 		log(_object, _event, _data.toString());
+	}
+	synchronized public void logBreak()
+	{
+		log("------", "------", "------");
 	}
 	
 	synchronized public void close() {

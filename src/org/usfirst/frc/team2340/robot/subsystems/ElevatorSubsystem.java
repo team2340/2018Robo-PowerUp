@@ -26,24 +26,32 @@ public class ElevatorSubsystem extends GenericSubsystem {
 		}
 	}
 	
-	public int getEncoderValue() {
+	public int getEncoder() {
 		return Robot.oi.elevator.getSelectedSensorPosition(0);
 	}
 	
-	public int getEncoderValue(int _id) {
-		return getEncoderValue();
+	public int getEncoder(int _id) {
+		return getEncoder();
 	}
 	
 	public void move(double _val, ControlMode _mode) {
 		Robot.oi.elevator.set(_mode, _val);
 	}
 	
-	public void up(double _val, ControlMode _mode) {
-		move(Math.abs(_val), _mode);
+	public void movePosition(double _val) {
+		Robot.oi.elevator.set(ControlMode.Position, _val);
+	}
+	
+	public void move(double _val) {
+		Robot.oi.elevator.set(ControlMode.PercentOutput, _val);
+	}
+	
+	public void up(double _val) {
+		move(Math.abs(_val), ControlMode.PercentOutput);
 	}
 
-	public void down(double _val, ControlMode _mode) {
-		move(-Math.abs(_val), _mode);
+	public void down(double _val) {
+		move(-Math.abs(_val), ControlMode.PercentOutput);
 	}
 
 	public void stop() {

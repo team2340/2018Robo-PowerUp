@@ -9,11 +9,9 @@ public class AutoArm extends Command {
 	@Override
 	protected void initialize() {
 		Robot.myLogger.log("AutoArm","", "");
-
 		startTime = System.currentTimeMillis();
 	}
-	public  AutoArm( ) {
-	}
+	
 	@Override
 	protected void execute() {
 		Robot.arm.move(1);
@@ -22,11 +20,11 @@ public class AutoArm extends Command {
 	protected boolean isFinished() {
 		if (System.currentTimeMillis() >= (startTime + 4000)) {
 			Robot.arm.stop(); 
+			Robot.myLogger.logBreak();
 			return true;
 		}
 		else {
 			return false;
 		}
-
 	}
 }
