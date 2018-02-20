@@ -88,7 +88,7 @@ public class Robot extends IterativeRobot {
 		}
 		else if (am == AutoMode.DRIVE_FORWARD) {
 			// Drive forward is relative to the back of the robot
-			autonomousCommand.addSequential(new AutoDrive(RobotUtils.distanceMinusRobot(135)));
+			autonomousCommand.addSequential(new AutoDrive(RobotUtils.distanceMinusRobot(120)));
 		}
 		else if (am == AutoMode.ONE_SWITCH) {
 			if (gameData.charAt(0) == 'R') {
@@ -105,21 +105,22 @@ public class Robot extends IterativeRobot {
 				// so, desired distance = d - l - w + c; or, d - l - (w - c)
 				// distance from wall is known ahead of time (how wide is the diagonal piece).
 				autonomousCommand.addSequential(new AutoDrive(RobotUtils
-						.distanceMinusRobot(55.56 + (.5 * RobotUtils.getLengthOfRobot()) + corr.getCorrection().x)));
+						.distanceMinusRobot(55.56 + (.5 * RobotUtils.getLengthOfRobot()) + corr.getXCorr())));
 				autonomousCommand.addSequential(new AutoArm());
 			}
 			else {
-				autonomousCommand.addSequential(new AutoDrive(RobotUtils.distanceMinusRobot(228.735)));
+				DriveCorrection corr = new DriveCorrection();
+				autonomousCommand.addSequential(new AutoDrive(RobotUtils.distanceMinusRobot(228.735), corr, -1));
 				autonomousCommand.addSequential(new AutoRotation(-90));
 				autonomousCommand.addSequential(
-						new AutoDrive(RobotUtils.distanceMinusRobot(264 + (.5 * RobotUtils.getLengthOfRobot()))));
+						new AutoDrive(RobotUtils.distanceMinusRobot(264 + (.5 * RobotUtils.getLengthOfRobot())) + corr.getXCorr(), corr));
 				autonomousCommand.addSequential(new AutoRotation(-90));
 				autonomousCommand.addParallel(new AutoElevator(19));
 				autonomousCommand.addSequential(
-						new AutoDrive(RobotUtils.distanceMinusRobot(88.735 + (.5 * RobotUtils.getLengthOfRobot()))));
+						new AutoDrive(RobotUtils.distanceMinusRobot(88.735 + (.5 * RobotUtils.getLengthOfRobot())) + corr.getYCorr(), corr));
 				autonomousCommand.addSequential(new AutoRotation(-90));
 				autonomousCommand.addSequential(
-						new AutoDrive(RobotUtils.distanceMinusRobot(55.56 + (.5 * RobotUtils.getLengthOfRobot()))));
+						new AutoDrive(RobotUtils.distanceMinusRobot(55.56 + (.5 * RobotUtils.getLengthOfRobot())) + corr.getXCorr()));
 				autonomousCommand.addSequential(new AutoArm());
 			}
 		}

@@ -7,8 +7,8 @@ public class DriveCorrection {
 	
 	public Tuple<Double, Double> correction(double _desiredDistance, double _currentAngle, double _angularLimit) {
 		if(_currentAngle < -_angularLimit || _currentAngle > _angularLimit) { //Out of range
-			correction.x = Math.sin(Math.toRadians(_currentAngle)) * _desiredDistance;
-			correction.y = Math.cos(Math.toRadians(_currentAngle)) * _desiredDistance;
+			correction.x += Math.sin(Math.toRadians(_currentAngle)) * _desiredDistance;
+			correction.y += Math.cos(Math.toRadians(_currentAngle)) * _desiredDistance;
 			print();
 		}
 		else {
@@ -21,6 +21,18 @@ public class DriveCorrection {
 		System.out.print("Getting correction: ");
 		print();
 		return correction;
+	}
+	
+	public Double getXCorr() {
+		Double x = correction.x;
+		correction.x = 0d;
+		return x;
+	}
+	
+	public Double getYCorr() {
+		Double y = correction.y;
+		correction.y = 0d;
+		return y;
 	}
 	
 	public void clear() {
