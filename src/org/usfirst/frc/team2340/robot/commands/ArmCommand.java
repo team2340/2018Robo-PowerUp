@@ -25,7 +25,7 @@ public class ArmCommand extends Command {
 	protected void execute() {
 		double z = (1 + controller.getZ()) / 2;
 
-		if (controller.getRawButton(RobotMap.BUTTON_3) && (!controller.getRawButton(RobotMap.BUTTON_1))) {
+		if (controller.getRawButton(RobotMap.BUTTON_3) && (!controller.getRawButton(RobotMap.BUTTON_1))){
 			if (z != 0) {
 				Robot.arm.move(z);
 			}

@@ -21,7 +21,6 @@ public class CameraCommand extends Command {
 	VideoSink server;
 	Mat source = new Mat();
 	Integer count=0;
-//	boolean started = false;
 
 	public CameraCommand(){
 		controller = Robot.oi.driveController;
@@ -67,12 +66,12 @@ public class CameraCommand extends Command {
 		{
 			buttonPressed = false;
 		}
-		if(controller.getRawButton(RobotMap.BUTTON_2)){
+		if(controller.getRawButton(RobotMap.BUTTON_6)){
 			if(!buttonHit) {
 				buttonHit = true;
 				CvSink cvSink = CameraServer.getInstance().getVideo();
 				cvSink.grabFrame(source);	
-				Imgcodecs.imwrite("/images/pic_"+ count +".jpg", source);
+				Imgcodecs.imwrite("images/pic_"+ count +".jpg", source);
 				count++;
 			}
 		}

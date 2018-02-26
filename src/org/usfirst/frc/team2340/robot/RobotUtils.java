@@ -18,8 +18,17 @@ public class RobotUtils {
 	
 	private static double wheelDiameter = 1;
 	private static double lengthOfRobot = 0;
+	private static double widthOfRobot = 0;
+	private static double heightOfRobotArms = 0;
+	
 	public static void lengthOfRobot(double _lengthOfRobot) {
 		lengthOfRobot = _lengthOfRobot;
+	}
+	public static void widthOfRobot(double _widthOfRobot) {
+		widthOfRobot = _widthOfRobot;
+	}
+	public static void heightOfRobotArms(double _heightOfRobotArms) {
+		heightOfRobotArms = _heightOfRobotArms;
 	}
 	public static double getEncPositionFromIN(double distanceInInches) {
 		return (distanceInInches/(wheelDiameter * Math.PI))*1024*4;
@@ -30,7 +39,12 @@ public class RobotUtils {
 	public static double getLengthOfRobot() {
 		return lengthOfRobot;
 	}
-
+	public static double getWidthOfRobot() {
+		return widthOfRobot;
+	}
+	public static double getHeightOfRobotArms() {
+		return heightOfRobotArms;
+	}
 	public static void setWheelDiameter(double _wheelDiameter) {
 		wheelDiameter = _wheelDiameter;
 	}

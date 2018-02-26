@@ -6,23 +6,23 @@ import org.usfirst.frc.team2340.robot.commands.ArmCommand;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
-import edu.wpi.first.wpilibj.Compressor;
+//import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class ArmSubsystem extends Subsystem {
 	static private ArmSubsystem subsystem;
-	private Compressor compressor;
+//	private Compressor compressor;
 	private Solenoid festioSolenoid;
 	private Solenoid festioSolenoid2;
 	private ArmSubsystem() {
 		createArmone();
-		createArmtwo();
+//		createArmtwo();
 //		compressor = new Compressor();
 //		compressor.setClosedLoopControl (true);
 //		
-//		festioSolenoid = new Solenoid(RobotMap.PNEUMATICS_TAL_ID, 0);
-//		festioSolenoid2 = new Solenoid(RobotMap.PNEUMATICS_TAL_ID,1);
+		festioSolenoid = new Solenoid(RobotMap.PNEUMATICS_TAL_ID, 0);
+		festioSolenoid2 = new Solenoid(RobotMap.PNEUMATICS_TAL_ID,1);
 		System.out.println( "arm Subsystem created");
 		
 	}
@@ -43,29 +43,29 @@ public class ArmSubsystem extends Subsystem {
 			System.out.println("createArmone FAILED");
 		}
 		}
-	private void createArmtwo() {
-		try {
-			Robot.oi.armtwo = new WPI_TalonSRX(RobotMap.ARM_TWO_TAL_ID);
-			Robot.oi.armtwo.configNominalOutputForward(0,0);
-			Robot.oi.armtwo.configNominalOutputReverse(0,0);
-		    Robot.oi.armtwo.selectProfileSlot(0,0);
-		} catch (Exception ex) {
-			System.out.println("createArmone FAILED");
-	
-		}
-	}
+//	private void createArmtwo() {
+//		try {
+//			Robot.oi.armtwo = new WPI_TalonSRX(RobotMap.ARM_TWO_TAL_ID);
+//			Robot.oi.armtwo.configNominalOutputForward(0,0);
+//			Robot.oi.armtwo.configNominalOutputReverse(0,0);
+//		    Robot.oi.armtwo.selectProfileSlot(0,0);
+//		} catch (Exception ex) {
+//			System.out.println("createArmone FAILED");
+//	
+//		}
+//	}
 	
 	public void move(double amt) {
 		Robot.oi.armone.set(amt);
-		Robot.oi.armtwo.set(-amt);
+//		Robot.oi.armtwo.set(-amt);
 	}
 	
 	public void open() {
-		festioSolenoid.set(true);
+		festioSolenoid.set(false);
 		festioSolenoid2.set(true);
 	}
 	public void close() {
-		festioSolenoid.set(false);
+		festioSolenoid.set(true);
 		festioSolenoid2.set(false);
 	}
 	

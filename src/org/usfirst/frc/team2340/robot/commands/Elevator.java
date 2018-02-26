@@ -3,8 +3,6 @@ package org.usfirst.frc.team2340.robot.commands;
 import org.usfirst.frc.team2340.robot.Robot;
 import org.usfirst.frc.team2340.robot.RobotUtils;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -15,15 +13,15 @@ public class Elevator extends Command {
 
 	@Override
 	protected void initialize() {
+		Robot.elevator.setPosition();
 		Robot.myLogger.log("Elevator","desiredHeight", distance);
-		Robot.elevator.setEncoder(0);
 		
 		startTime = System.currentTimeMillis();
 		desiredHeight = RobotUtils.getEncPositionFromIN(distance);
 		Robot.elevator.movePosition( desiredHeight);
 	}
 	public  Elevator(double wantedHeight) {
-		requires(Robot.drive);
+		requires(Robot.elevator);
 		distance = wantedHeight;
 	}
 

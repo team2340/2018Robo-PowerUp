@@ -16,20 +16,18 @@ public class DriveSubsystem extends Subsystem {
 
 	static private DriveSubsystem subsystem;
 	DifferentialDrive robotDrive;
-	public double centerX;
-	public double finalDistance;
 	public double speedP = 1.5;
 	public double speedI = 0.0;
 	public double speedD = 0.0;
 	public double speedF = 0.001;
 	public double speedPeakOutputVoltage = 1f;
 	
-	public double positionP = 1.5;
+	public double positionP = 0.08525; //25% power at 3000 error
 	//public double positionI = 0.0001;
 	//public double positionD = 10.0;
-	
+
 	public double positionI = 0.000;
-		public double positionD = 0.0;
+	public double positionD = 0.0;
 	public double positionF = 0.0;
 	public float positionPeakOutputVoltage = 10.0f/12.0f;
 	
@@ -48,8 +46,6 @@ public class DriveSubsystem extends Subsystem {
 	}
 
 	private DriveSubsystem() {
-		centerX = -1;
-		finalDistance = 0.0;
 		createLeftSide();
 		createRightSide();
 		setForPosition();

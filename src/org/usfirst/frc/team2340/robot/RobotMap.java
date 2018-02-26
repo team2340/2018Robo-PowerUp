@@ -34,8 +34,8 @@ public class RobotMap {
 		public static final int ELEVATOR_TAL_ID = 5; // Elevator is 5
 		public static final int ARM_ONE_TAL_ID = 6; //Arm one left side is 6
 		public static final int ARM_TWO_TAL_ID = 7; //Arm two right side is 7
-		public static final int CLIMBING_TAL_ID = 8; //Ball Shooter is 8
-		public static final int PNEUMATICS_TAL_ID = 9; //expand or retract gear holder window motor is 9
+		public static final int CLIMBING_TAL_ID = 8; //climbing is 8
+		public static final int PNEUMATICS_TAL_ID = 9; //expand or retract arms
 		
 		public static boolean TAKE_PIC = false;
 	}

@@ -3,29 +3,28 @@ package org.usfirst.frc.team2340.robot.commands;
 import org.usfirst.frc.team2340.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class AutoArm extends Command {
+public class Timer extends Command {
 	long startTime = 0;
+	double delay = 0;
+
 	@Override
 	protected void initialize() {
-		Robot.myLogger.log("AutoArm", "", "");
-
+		Robot.myLogger.log("Timer", "", "");
 		startTime = System.currentTimeMillis();
-	}
-
-	public AutoArm() {
-		requires(Robot.arm);
+		delay = SmartDashboard.getNumber("Delay", 0);
+		System.out.println("TIMER!!!!! Start " + startTime + " " + delay);
 	}
 
 	@Override
 	protected void execute() {
-		Robot.arm.move(1);
 	}
 
 	@Override
 	protected boolean isFinished() {
-		if (System.currentTimeMillis() >= (startTime + 4000)) {
-			Robot.arm.move(0);
+		if (System.currentTimeMillis() >= (startTime + delay*1000)) {
+			System.out.println("TIMER DONE!!!!!");
 			return true;
 		}
 		else {

@@ -1,5 +1,7 @@
 package org.usfirst.frc.team2340.robot;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
@@ -44,8 +46,9 @@ public class DebugLogger {
 		//TODO: Only open if it isn't already opened.
 		try {
 			log = Logger.getLogger(_fileName);
+			String fullFile = _filePath+_fileName+format.format(Calendar.getInstance().getTime())+_extension;
 			log.setUseParentHandlers(false); //Disables console output
-			fh = new FileHandler(_filePath+_fileName+format.format(Calendar.getInstance().getTime())+_extension);
+			fh = new FileHandler(fullFile);
 			fh.setFormatter(logFormat);
 			log.addHandler(fh);
 		} catch (Exception e) {
@@ -62,6 +65,10 @@ public class DebugLogger {
 		lr.setSourceClassName(_object);
 		lr.setSourceMethodName(_event);
 		log.log(lr);
+		}
+		else
+		{
+			System.out.println(_object+" "+_event+": "+_data);
 		}
 	}
 	

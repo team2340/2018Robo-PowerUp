@@ -49,7 +49,9 @@ public class Rotation extends Command {
 			Robot.oi.right.set(ControlMode.Velocity, 0);
 		}
 		else {
-			double rotateSpeed = ((turnAngle - angle)/turnAngle)+700;
+			double t = 1023*((turnAngle - angle)/turnAngle);
+			if (t < 800) t = 800;
+			double rotateSpeed = t;
 			if (rotateRight) {
 				Robot.oi.left.set(ControlMode.Velocity, rotateSpeed);
 				Robot.oi.right.set(ControlMode.Velocity, rotateSpeed);

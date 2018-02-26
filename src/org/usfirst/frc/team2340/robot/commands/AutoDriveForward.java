@@ -24,7 +24,9 @@ public class AutoDriveForward extends Command {
 		Robot.drive.setForPosition();
 		Robot.myLogger.log("AutoDriveForward","", "");
 		startTime = System.currentTimeMillis();
-		desiredSpot = RobotUtils.getEncPositionFromIN(RobotUtils.distanceMinusRobot(distance));
+		double go = RobotUtils.distanceMinusRobot(distance);
+		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!Go: "+go);
+		desiredSpot = RobotUtils.getEncPositionFromIN(go);
 		Robot.myLogger.log("desired","spot", RobotUtils.distanceMinusRobot(distance));
 		Robot.oi.left.set(ControlMode.Position, desiredSpot);
 		Robot.oi.right.set(ControlMode.Position, -desiredSpot);
@@ -45,7 +47,7 @@ public class AutoDriveForward extends Command {
 		Robot.myLogger.log("rightencoder","position", Robot.oi.right.getSelectedSensorPosition(0));
 		if (Robot.oi.gyro.getAngle()>1){
 			System.out.println("Rotate to the left!!!!!!!!!");
-			double correction =Robot.drive.speedP-(Robot.drive.speedP * (.5 * (Math.abs(Robot.oi.gyro.getAngle())/ 3.0) ) );
+			double correction =Robot.drive.positionP-(Robot.drive.positionP * (.5 * (Math.abs(Robot.oi.gyro.getAngle())/ 3.0) ) );
 			if (correction < 0 ) {
 				correction = 0;
 			}
@@ -57,7 +59,7 @@ public class AutoDriveForward extends Command {
 		}
 		else if (Robot.oi.gyro.getAngle()<-1) {
 			System.out.println("Rotate to the right!!!!!!!!!!!!!");
-			double correction =Robot.drive.speedP-(Robot.drive.speedP * (.5 * (Math.abs(Robot.oi.gyro.getAngle())/ 3.0) ) );
+			double correction =Robot.drive.positionP-(Robot.drive.positionP * (.5 * (Math.abs(Robot.oi.gyro.getAngle())/ 3.0) ) );
 			if (correction < 0 ) {
 				correction = 0;
 			}
@@ -69,8 +71,8 @@ public class AutoDriveForward extends Command {
 		}
 		else {
 			System.out.println("Don't rotate!!!!!");
-			Robot.oi.right.config_kP(0,Robot.drive.speedP,0);
-			Robot.oi.left.config_kP(0,Robot.drive.speedP,0);
+			Robot.oi.right.config_kP(0,Robot.drive.positionP,0);
+			Robot.oi.left.config_kP(0,Robot.drive.positionP,0);
 			Robot.oi.left.set(ControlMode.Position, desiredSpot);
 			Robot.oi.right.set(ControlMode.Position, -desiredSpot);
 		}
@@ -86,10 +88,16 @@ public class AutoDriveForward extends Command {
 		//		int leftErr = Math.abs(Robot.oi.left.getClosedLoopError(0));
 		//		int rightErr = Math.abs(Robot.oi.right.getClosedLoopError(0));
 
-		if((leftPos <= desiredSpot+2500 && leftPos >= desiredSpot-2500)
-				&& (rightPos <= desiredSpot+2500 && rightPos >= desiredSpot-2500))
+		if((leftPos <= desiredSpot+500 && leftPos >= desiredSpot-500)
+				&& (rightPos <= desiredSpot+500 && rightPos >= desiredSpot-500))
 		{
 			System.out.println("DONE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+			System.out.println("desired spot " + desiredSpot);
+			System.out.println("left position " + Robot.oi.left.getSelectedSensorPosition(0));
+			System.out.println("right position " + Robot.oi.right.getSelectedSensorPosition(0));
+			long elapsed = (System.currentTimeMillis() - startTime) / 1000;
+			System.out.println("Auto Drive Foward Distance: " + distance + ", Elapsed: " + elapsed);
+			System.out.println("Current angle: "+ Robot.oi.gyro.getAngle());
 			return true;
 		}
 		return false;
@@ -97,15 +105,6 @@ public class AutoDriveForward extends Command {
 
 	@Override
 	protected boolean isFinished() {
-		if(done()) {
-			System.out.println("DONE");
-			System.out.println("desired spot " + desiredSpot);
-			System.out.println("left position " + Robot.oi.left.getSelectedSensorPosition(0));
-			System.out.println("right position " + Robot.oi.right.getSelectedSensorPosition(0));
-			long elapsed = (System.currentTimeMillis() - startTime) / 1000;
-			System.out.println("Auto Drive Foward Distance: " + distance + ", Elapsed: " + elapsed);
-			System.out.println("Current angle: "+ Robot.oi.gyro.getAngle());
-		}
 		return done();
 	}
 }
