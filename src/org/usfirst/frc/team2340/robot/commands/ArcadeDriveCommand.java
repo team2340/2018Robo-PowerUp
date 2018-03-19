@@ -49,7 +49,7 @@ public class ArcadeDriveCommand extends Command {
 		x = controller.getX() / z;
 
 		Robot.drive.setArcadeSpeed(x, y);
-		// System.out.println("ArcadeSpeed x:"+x+" y:"+y);
+		// System.out.println("ArcadeSpeed x:"+x+" y:"+y); this was already comented out
 	}
 
 	@Override

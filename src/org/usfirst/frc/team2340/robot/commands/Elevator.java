@@ -12,14 +12,15 @@ public class Elevator extends Command {
 	double distance = 0;
 
 	@Override
-	protected void initialize() {
+	protected void initialize() { //853333 -> 55in: 15515.145enc/in
 		Robot.elevator.setPosition();
 		Robot.myLogger.log("Elevator","desiredHeight", distance);
-		
 		startTime = System.currentTimeMillis();
-		desiredHeight = RobotUtils.getEncPositionFromIN(distance);
-		Robot.elevator.movePosition( desiredHeight);
+		desiredHeight = RobotUtils.getEncPositionFromINElevator(distance);
+		Robot.elevator.movePosition(desiredHeight);
+		Robot.myLogger.log("Elevator","desiredHeight enc", desiredHeight);
 	}
+
 	public  Elevator(double wantedHeight) {
 		requires(Robot.elevator);
 		distance = wantedHeight;
@@ -33,8 +34,9 @@ public class Elevator extends Command {
 	}
 	@Override
 	protected boolean isFinished() {
-		if (Robot.elevator.getEncoder() <= (desiredHeight + 50)
-			&& Robot.elevator.getEncoder() >= (desiredHeight - 50)) {
+		if (Math.abs(Robot.elevator.getEncoder()) <= (desiredHeight + 50)
+			&& Math.abs(Robot.elevator.getEncoder()) >= (desiredHeight - 50)) {
+			Robot.myLogger.log("Elevator","Done",Robot.elevator.getEncoder());
 			return true;
 		}
 		else {

@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.command.Command;
 public class ElevatorCommand extends Command {
 	private Joystick controller;
 	double currentTime;
+	int lip;
 
 	public ElevatorCommand() {
 		requires(Robot.elevator);
@@ -18,6 +19,7 @@ public class ElevatorCommand extends Command {
 	@Override
 	protected void initialize() {
 		controller = Robot.oi.acquisitionController;
+		lip = 1;
 	}
 
 	@Override
@@ -42,17 +44,14 @@ public class ElevatorCommand extends Command {
 		}
 
 		if (controller.getRawButton(RobotMap.BUTTON_4) && (!controller.getRawButton(RobotMap.BUTTON_1))) {
-			double desiredHeight = RobotUtils.getEncPositionFromIN(77);
-			 Robot.elevator.movePosition(desiredHeight-Robot.elevator.getEncoder()-16);
+			Robot.elevator.hitTheRoof();
 		}
 		else if (controller.getRawButton(RobotMap.BUTTON_4) && (controller.getRawButton(RobotMap.BUTTON_1))) {
-			double desiredHeight = (Robot.elevator.getEncoder() * -1);
-			Robot.elevator.movePosition(desiredHeight);
+			Robot.elevator.hitTheDeck();
 		}
 		else if (controller.getRawButton(RobotMap.BUTTON_6) && (!controller.getRawButton(RobotMap.BUTTON_1))) {
-			double desiredHeight = RobotUtils.getEncPositionFromIN(19);
+			double desiredHeight = RobotUtils.getEncPositionFromIN(19-RobotUtils.getHeightOfRobotArms()+(RobotUtils.getHeightOfBox()));
 			Robot.elevator.movePosition(desiredHeight - Robot.elevator.getEncoder());
-
 		}
 	}
 

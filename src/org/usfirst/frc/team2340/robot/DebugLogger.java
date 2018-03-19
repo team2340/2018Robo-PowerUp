@@ -58,7 +58,7 @@ public class DebugLogger {
 	
 	synchronized public void log(String _object, String _event, String _data)
 	{
-//		System.out.println("Logging: "+_data);'
+		System.out.println("Logging: "+_object+","+_event+","+_data);
 		if(log != null) {
 		LogRecord lr = new LogRecord(Level.INFO, _data);
 		//Note: Re-purposed the sourceClassName and SourceMethodName.

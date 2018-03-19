@@ -5,9 +5,12 @@ import org.usfirst.frc.team2340.robot.RobotUtils.AutoMode;
 import org.usfirst.frc.team2340.robot.commands.AutoArm;
 import org.usfirst.frc.team2340.robot.commands.AutoDriveForward;
 import org.usfirst.frc.team2340.robot.commands.Elevator;
+import org.usfirst.frc.team2340.robot.commands.ElevatorTimed;
 import org.usfirst.frc.team2340.robot.commands.HomingCommand;
+import org.usfirst.frc.team2340.robot.commands.PneumaticArms;
 import org.usfirst.frc.team2340.robot.commands.CameraCommand;
 import org.usfirst.frc.team2340.robot.commands.Rotation;
+import org.usfirst.frc.team2340.robot.commands.StolenEvevatorTimerCode;
 import org.usfirst.frc.team2340.robot.commands.Timer;
 import org.usfirst.frc.team2340.robot.subsystems.*;
 
@@ -29,12 +32,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 //TODO: add 13 to arm height for the box height
 public class Robot extends IterativeRobot {
 	public static final OI oi = new OI();
-	public static final DriveSubsystem drive = DriveSubsystem.getInstance();
-	public static final ClimbingSubsystem climbing = ClimbingSubsystem.getInstance(); 
-	public static final ArmSubsystem arm = ArmSubsystem.getInstance();
-	public static final ElevatorSubsystem elevator = ElevatorSubsystem.getInstance();
-	public static int lastTargets = 0;
+	public static DriveSubsystem drive = null;
+	public static ClimbingSubsystem climbing = null; 
+	public static ArmSubsystem arm = null;
+	public static ElevatorSubsystem elevator = null;
 	public static final DebugLogger myLogger = new DebugLogger();
+	public static int lip = 1;
 
 	CommandGroup autonomousCommand = null;
 	CameraCommand cameraCommand = null;
@@ -45,10 +48,35 @@ public class Robot extends IterativeRobot {
 	 * for any initialization code.
 	 */
 	public void robotInit() {
-		RobotUtils.lengthOfRobot(33);
-		RobotUtils.widthOfRobot(28);
-		RobotUtils.heightOfRobotArms(16);
-		RobotUtils.setWheelDiameter(4);
+		new ConfigParser("config.txt");
+		Integer length = ConfigParser.get(ParserDefs.RobotLength, Integer.class);
+		length = (length != null)? length : 33;
+		Robot.myLogger.log("Robot","Length",length); 
+		
+		Integer width = ConfigParser.get(ParserDefs.RobotWidth, Integer.class);
+		width = (width != null)? width : 28;
+		Robot.myLogger.log("Robot","Width",width); 
+		
+		Integer wheelDiameter = ConfigParser.get(ParserDefs.WheelDiameter, Integer.class);
+		wheelDiameter = (wheelDiameter != null)? wheelDiameter : 4;
+		Robot.myLogger.log("Robot","WheelDiameter",wheelDiameter); 
+		
+		Integer bumpers = ConfigParser.get(ParserDefs.Bumpers, Integer.class);
+		bumpers = (bumpers != null)? bumpers : 6;
+		Robot.myLogger.log("Robot","Bumpers",bumpers); 
+		length += bumpers;
+		width += bumpers;
+		
+		RobotUtils.lengthOfRobot(length);
+		RobotUtils.widthOfRobot(width);
+		RobotUtils.heightOfRobotArms(11);
+		RobotUtils.heightOfBox(13);
+		RobotUtils.setWheelDiameter(wheelDiameter);
+
+		drive = DriveSubsystem.getInstance();         
+		climbing = ClimbingSubsystem.getInstance();
+		arm = ArmSubsystem.getInstance();               
+		elevator = ElevatorSubsystem.getInstance();
 
 		myLogger.open("logs/", "DebugLogger", ".csv");
 
@@ -62,6 +90,7 @@ public class Robot extends IterativeRobot {
 		autoMode.addObject("TwoSwitch", AutoMode.TwoSwitch);
 		autoMode.addObject("ThreeSwitch", AutoMode.ThreeSwitch);
 		autoMode.addObject("ThreeScale", AutoMode.ThreeScale);
+		autoMode.addObject("Test", AutoMode.Test);
 		SmartDashboard.putData("Autonomous Modes", autoMode);
 
 		SmartDashboard.putNumber("Delay", 0);
@@ -92,36 +121,52 @@ public class Robot extends IterativeRobot {
 			autonomousCommand.addSequential(new AutoDriveForward(120/*-RobotUtils.getLengthOfRobot()/2*/));
 		}
 		else {
+			Robot.myLogger.log("GameData", "Auto", DriverStation.getInstance().getGameSpecificMessage());
 			if (am == AutoMode.DriveForward) {
 				autonomousCommand.addSequential(new AutoDriveForward(120/*-RobotUtils.getLengthOfRobot()/2*/));
+			}
+			else if (am == AutoMode.Test) {
+				Robot.myLogger.log("Test", "R", "");
+				Robot.elevator.setEncoder(0);
+//				autonomousCommand.addSequential(new HomingCommand());
+//				autonomousCommand.addSequential(new PneumaticArms());
+//				autonomousCommand.addSequential (new StolenEvevatorTimerCode(2));
+//				autonomousCommand.addSequential(new AutoDriveForward(235.235));
+				autonomousCommand.addSequential(new Elevator(65));
+//				autonomousCommand.addParallel(new ElevatorTimed(5));
+//				autonomousCommand.addSequential (new StolenEvevatorTimerCode(3));
 			}
 			else if (am == AutoMode.OneSwitch) {
 				String gameData;
 				gameData = DriverStation.getInstance().getGameSpecificMessage();
 				if (gameData.charAt(0) == 'R') {
 					Robot.myLogger.log("OneSwitch", "R", "");
-					autonomousCommand.addParallel(new HomingCommand());
+					autonomousCommand.addSequential(new HomingCommand());
+					autonomousCommand.addSequential(new PneumaticArms());
 					autonomousCommand.addSequential(new AutoDriveForward(168));
+					autonomousCommand.addParallel(new ElevatorTimed(5));
+//					autonomousCommand.addParallel(new Elevator((19-RobotUtils.getHeightOfRobotArms())+(RobotUtils.getHeightOfBox())));
 					autonomousCommand.addSequential(new Rotation(-90));
-					autonomousCommand.addParallel(new Elevator(19-(/*.5**/RobotUtils.getHeightOfRobotArms())));
+//					autonomousCommand.addParallel(new Elevator((19-RobotUtils.getHeightOfRobotArms())+(RobotUtils.getHeightOfBox())));
 					autonomousCommand.addSequential(new AutoDriveForward(55.56 - .5 * RobotUtils.getWidthOfRobot() + .5 * RobotUtils.getLengthOfRobot()));
-//					autonomousCommand.addSequential(new AutoArm());
+					autonomousCommand.addSequential(new AutoArm());
 				}
 				else {
 					Robot.myLogger.log("OneSwitch", "L", "");
-					autonomousCommand.addParallel(new HomingCommand());
-					autonomousCommand
-							.addSequential(new AutoDriveForward(235.235));/*228.735 + (.5 * RobotUtils.getLengthOfRobot())));*/
+					autonomousCommand.addSequential(new HomingCommand());
+					autonomousCommand.addSequential(new PneumaticArms());
+					autonomousCommand.addSequential(new AutoDriveForward(235.235));/*228.735 + (.5 * RobotUtils.getLengthOfRobot())));*/
+					autonomousCommand.addParallel(new ElevatorTimed(5));
+//					autonomousCommand.addParallel(new Elevator((19-RobotUtils.getHeightOfRobotArms())+(RobotUtils.getHeightOfBox())));
 					autonomousCommand.addSequential(new Rotation(-90));
 					autonomousCommand.addSequential(new AutoDriveForward(264));
 					autonomousCommand.addSequential(new Rotation(-90));
-					autonomousCommand.addParallel(new Elevator(19-(/*.5**/RobotUtils.getHeightOfRobotArms())));
-					autonomousCommand.addSequential(new AutoDriveForward(
-							67.235 + (.5 * RobotUtils.getLengthOfRobot()) /*- (.5 * RobotUtils.getWidthOfRobot())*/));
+//					autonomousCommand.addParallel(new Elevator((19-RobotUtils.getHeightOfRobotArms())+(RobotUtils.getHeightOfBox())));
+					autonomousCommand.addSequential(new AutoDriveForward(67.235 + (.5 * RobotUtils.getLengthOfRobot()) /*- (.5 * RobotUtils.getWidthOfRobot())*/));
 					autonomousCommand.addSequential(new Rotation(-90));
 					autonomousCommand.addSequential(new AutoDriveForward(
 							55.56 -(.5 * RobotUtils.getLengthOfRobot()) + (.5 * RobotUtils.getWidthOfRobot())));
-//					autonomousCommand.addSequential(new AutoArm());
+					autonomousCommand.addSequential(new AutoArm());
 				}
 			}
 			else if (am == AutoMode.OneScale) {
@@ -130,24 +175,31 @@ public class Robot extends IterativeRobot {
 				if (gameData.charAt(1) == 'R') {
 					Robot.myLogger.log("OneScale", "R", "");
 					autonomousCommand.addParallel(new HomingCommand());
+					autonomousCommand.addSequential(new PneumaticArms());
 					autonomousCommand.addSequential(new AutoDriveForward(324));
+					autonomousCommand.addParallel(new ElevatorTimed(6));
+//					autonomousCommand.addParallel(new Elevator(((51-RobotUtils.getHeightOfRobotArms())+((RobotUtils.getHeightOfBox()+lip)))*.5));					
 					autonomousCommand.addSequential(new Rotation(-90));
-					autonomousCommand.addParallel(new Elevator(51-(/*.5**/RobotUtils.getHeightOfRobotArms())));
+					autonomousCommand.addParallel(new ElevatorTimed(8));
+//					autonomousCommand.addParallel(new Elevator((51-RobotUtils.getHeightOfRobotArms())+((RobotUtils.getHeightOfBox()+lip))));
 					autonomousCommand.addSequential(new AutoDriveForward(41.88 - .5 * RobotUtils.getWidthOfRobot() + .5 * RobotUtils.getLengthOfRobot()));
-//					autonomousCommand.addSequential(new AutoArm());
+					autonomousCommand.addSequential(new AutoArm());
 				}
 				else {
 					Robot.myLogger.log("OneScale", "L", "");
 					autonomousCommand.addParallel(new HomingCommand());
+					autonomousCommand.addSequential(new PneumaticArms());
 					autonomousCommand.addSequential(new AutoDriveForward(235.235));
-					autonomousCommand.addSequential(new Rotation(-90));
+					autonomousCommand.addParallel(new ElevatorTimed(6));
+//					autonomousCommand.addParallel(new Elevator(((51-RobotUtils.getHeightOfRobotArms())+((RobotUtils.getHeightOfBox()+lip)))*.5));										autonomousCommand.addSequential(new Rotation(-90));
 					autonomousCommand.addSequential(new AutoDriveForward(264));
 					autonomousCommand.addSequential(new Rotation(90));
-					autonomousCommand.addParallel(new Elevator(51-(/*.5**/RobotUtils.getHeightOfRobotArms())));
+					autonomousCommand.addParallel(new ElevatorTimed(8));
+//					autonomousCommand.addParallel(new Elevator((51-RobotUtils.getHeightOfRobotArms())+((RobotUtils.getHeightOfBox()+lip))));
 					autonomousCommand.addSequential(new AutoDriveForward(88.735 + (.5 * RobotUtils.getLengthOfRobot())));
 					autonomousCommand.addSequential(new Rotation(90));
 					autonomousCommand.addSequential(new AutoDriveForward(41.88 - .5 * RobotUtils.getWidthOfRobot() + .5 * RobotUtils.getLengthOfRobot()));
-//					autonomousCommand.addSequential(new AutoArm());
+					autonomousCommand.addSequential(new AutoArm());
 				}
 			}
 			else if (am == AutoMode.TwoSwitch) {
@@ -155,21 +207,25 @@ public class Robot extends IterativeRobot {
 				gameData = DriverStation.getInstance().getGameSpecificMessage();
 				if (gameData.charAt(0) == 'R') {
 					Robot.myLogger.log("TwoSwitch", "R", "");
-					autonomousCommand.addParallel(new HomingCommand());
-					autonomousCommand.addParallel(new Elevator(19-(/*.5**/RobotUtils.getHeightOfRobotArms())));
+					autonomousCommand.addSequential(new HomingCommand());
+					autonomousCommand.addSequential(new PneumaticArms());
+					autonomousCommand.addParallel(new ElevatorTimed(5));
+//					autonomousCommand.addParallel(new Elevator((19-RobotUtils.getHeightOfRobotArms())+(RobotUtils.getHeightOfBox())));
 					autonomousCommand.addSequential(new AutoDriveForward(140-.5*RobotUtils.getLengthOfRobot()));
-//					autonomousCommand.addSequential(new AutoArm());
+					autonomousCommand.addSequential(new AutoArm());
 				}
 				else {
 					Robot.myLogger.log("TwoSwitch", "L", "");
-					autonomousCommand.addParallel(new HomingCommand());
+					autonomousCommand.addSequential(new HomingCommand());
+					autonomousCommand.addSequential(new PneumaticArms());
 					autonomousCommand.addSequential(new AutoDriveForward(67));
+					autonomousCommand.addParallel(new ElevatorTimed(5));
+//					autonomousCommand.addParallel(new Elevator((19-RobotUtils.getHeightOfRobotArms())+(RobotUtils.getHeightOfBox())));
 					autonomousCommand.addSequential(new Rotation(-90));
-					autonomousCommand.addParallel(new Elevator(19-(/*.5**/RobotUtils.getHeightOfRobotArms())));
 					autonomousCommand.addSequential(new AutoDriveForward(87.5 + (.5 * RobotUtils.getWidthOfRobot())));
 					autonomousCommand.addSequential(new Rotation(90));
 					autonomousCommand.addSequential(new AutoDriveForward(104 - (.5 * RobotUtils.getLengthOfRobot())));
-//					autonomousCommand.addSequential(new AutoArm());
+					autonomousCommand.addSequential(new AutoArm());
 				}
 			}
 			else if (am == AutoMode.ThreeSwitch) {
@@ -177,25 +233,31 @@ public class Robot extends IterativeRobot {
 				gameData = DriverStation.getInstance().getGameSpecificMessage();
 				if (gameData.charAt(0) == 'R') {
 					Robot.myLogger.log("ThreeSwitch", "R", "");
-					autonomousCommand.addParallel(new HomingCommand());
+					autonomousCommand.addSequential(new HomingCommand());
+					autonomousCommand.addSequential(new PneumaticArms());
 					autonomousCommand.addSequential(new AutoDriveForward(235.235));
+					autonomousCommand.addParallel(new ElevatorTimed(5));
+//					autonomousCommand.addParallel(new Elevator((19-RobotUtils.getHeightOfRobotArms())+(RobotUtils.getHeightOfBox())));
 					autonomousCommand.addSequential(new Rotation(90));
 					autonomousCommand.addSequential(new AutoDriveForward(264));
 					autonomousCommand.addSequential(new Rotation(90));
-					autonomousCommand.addParallel(new Elevator(19-(/*.5**/RobotUtils.getHeightOfRobotArms())));
+//					autonomousCommand.addParallel(new Elevator((19-RobotUtils.getHeightOfRobotArms())+(RobotUtils.getHeightOfBox())));
 					autonomousCommand.addSequential(new AutoDriveForward(67.235 + (.5 * RobotUtils.getLengthOfRobot())));
 					autonomousCommand.addSequential(new Rotation(90));
 					autonomousCommand.addSequential(new AutoDriveForward(55.56 - .5 * RobotUtils.getWidthOfRobot() + .5 * RobotUtils.getLengthOfRobot()));
-//					autonomousCommand.addSequential(new AutoArm());
+					autonomousCommand.addSequential(new AutoArm());
 				}
 				else {
 					Robot.myLogger.log("ThreeSwitch", "L", "");
-					autonomousCommand.addParallel(new HomingCommand());
+					autonomousCommand.addSequential(new HomingCommand());
+					autonomousCommand.addSequential(new PneumaticArms());
 					autonomousCommand.addSequential(new AutoDriveForward(168));
+					autonomousCommand.addParallel(new ElevatorTimed(5));
+//					autonomousCommand.addParallel(new Elevator((19-RobotUtils.getHeightOfRobotArms())+(RobotUtils.getHeightOfBox())));
 					autonomousCommand.addSequential(new Rotation(90));
-					autonomousCommand.addParallel(new Elevator(19-(/*.5**/RobotUtils.getHeightOfRobotArms())));
+//					autonomousCommand.addParallel(new Elevator((19-RobotUtils.getHeightOfRobotArms())+(RobotUtils.getHeightOfBox())));
 					autonomousCommand.addSequential(new AutoDriveForward(55.56 - .5 * RobotUtils.getWidthOfRobot() + .5 * RobotUtils.getLengthOfRobot()));
-//					autonomousCommand.addSequential(new AutoArm());
+					autonomousCommand.addSequential(new AutoArm());
 				}
 			}
 			else if (am == AutoMode.ThreeScale) {
@@ -203,31 +265,39 @@ public class Robot extends IterativeRobot {
 				gameData = DriverStation.getInstance().getGameSpecificMessage();
 				if (gameData.charAt(1) == 'R') {
 					Robot.myLogger.log("ThreeScale", "R", "");
-					autonomousCommand.addParallel(new HomingCommand());
+					autonomousCommand.addSequential(new HomingCommand());
+					autonomousCommand.addSequential(new PneumaticArms());
 					autonomousCommand.addSequential(new AutoDriveForward(235.235));
+					autonomousCommand.addParallel(new ElevatorTimed(6));
+//					autonomousCommand.addParallel(new Elevator(((51-RobotUtils.getHeightOfRobotArms())+((RobotUtils.getHeightOfBox()+lip)))*.5));
 					autonomousCommand.addSequential(new Rotation(90));
 					autonomousCommand.addSequential(new AutoDriveForward(264));
 					autonomousCommand.addSequential(new Rotation(-90));
-					autonomousCommand.addParallel(new Elevator(51-(/*.5**/RobotUtils.getHeightOfRobotArms())));;/*half Height of Arms to get the center, then +12 where the evelator will over lap becuse this time there shiud be two over laps */
+//					autonomousCommand.addParallel(new Elevator((51-RobotUtils.getHeightOfRobotArms())+((RobotUtils.getHeightOfBox()+lip))));
 					autonomousCommand.addSequential(new AutoDriveForward(88.735 + (.5 * RobotUtils.getLengthOfRobot())));
+					autonomousCommand.addParallel(new ElevatorTimed(8));
+//					autonomousCommand.addParallel(new Elevator(((51-RobotUtils.getHeightOfRobotArms())+((RobotUtils.getHeightOfBox()+lip)))));
 					autonomousCommand.addSequential(new Rotation(-90));
 					autonomousCommand.addSequential(new AutoDriveForward(41.88 - .5 * RobotUtils.getWidthOfRobot() + .5 * RobotUtils.getLengthOfRobot()));
-//					autonomousCommand.addSequential(new AutoArm());
+					autonomousCommand.addSequential(new AutoArm());
 
 				}
 				else {
 					Robot.myLogger.log("ThreeScale", "L", "");
-					autonomousCommand.addParallel(new HomingCommand());
+					autonomousCommand.addSequential(new HomingCommand());
+					autonomousCommand.addParallel(new ElevatorTimed(14));
+					autonomousCommand.addSequential(new PneumaticArms());
+//					autonomousCommand.addSequential(new Elevator(51/*-RobotUtils.getHeightOfRobotArms())+((RobotUtils.getHeightOfBox()+lip)))*.5*/));
 					autonomousCommand.addSequential(new AutoDriveForward(324));
+//					autonomousCommand.addParallel(new Elevator((51-RobotUtils.getHeightOfRobotArms())+((RobotUtils.getHeightOfBox()+lip))));
 					autonomousCommand.addSequential(new Rotation(90));
-					autonomousCommand.addParallel(new Elevator(51-(/*.5**/RobotUtils.getHeightOfRobotArms())));
-					autonomousCommand.addSequential(new AutoDriveForward(41.88 - .5 * RobotUtils.getWidthOfRobot() + .5 * RobotUtils.getLengthOfRobot()));
-//					autonomousCommand.addSequential(new AutoArm());
+//					autonomousCommand.addParallel(new Elevator((51-RobotUtils.getHeightOfRobotArms())+((RobotUtils.getHeightOfBox()+lip))));
+					autonomousCommand.addSequential(new AutoDriveForward(/*was 41*/43.88 - .5 * RobotUtils.getWidthOfRobot() + .5 * RobotUtils.getLengthOfRobot()));
+					autonomousCommand.addSequential(new AutoArm());
 					}
 				}
 			}
 		}
-		System.out.println(am);
 		if (autonomousCommand != null)
 			autonomousCommand.start();
 	}
@@ -248,12 +318,15 @@ public class Robot extends IterativeRobot {
 	}
 
 	public void teleopPeriodic() {
+//		arm.startCompressor();
 		SmartDashboard.putNumber("left position", Robot.oi.left.getSelectedSensorPosition(0));
 		SmartDashboard.putNumber("right position ", Robot.oi.right.getSelectedSensorPosition(0));
 		SmartDashboard.putBoolean("Elevator Down ", Robot.oi.elevator.getSensorCollection().isRevLimitSwitchClosed());
+		SmartDashboard.putBoolean("Elevator Up ", Robot.oi.elevator.getSensorCollection().isFwdLimitSwitchClosed());
 		Scheduler.getInstance().run();
 	}
 
 	public void testPeriodic() {
+//		arm.stopCompressor();
 	}
 }

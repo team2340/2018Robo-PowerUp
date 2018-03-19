@@ -29,6 +29,6 @@ public class OI {
 	public WPI_TalonSRX climbing = null;
 	
 	public final double CAM_VIEWING_ANGLE = 61.0;
-	public final double IMG_WIDTH = 640.0;
-	public final double IMG_HEIGHT = 480.0;
+	public final double IMG_WIDTH = 160.0;
+	public final double IMG_HEIGHT = 120.0;
 }

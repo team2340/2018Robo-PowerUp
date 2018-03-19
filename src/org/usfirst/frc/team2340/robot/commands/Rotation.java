@@ -21,20 +21,22 @@ public class Rotation extends Command {
 
 	@Override
 	protected void initialize() {
+		startTime = System.currentTimeMillis();
 		Robot.drive.setForSpeed();
+		Robot.myLogger.log("Rotation","Start", startTime);
 		Robot.myLogger.log("Rotation","desiredAngle", desiredAngle);
 		Robot.myLogger.log("Rotation","rotationDirection", (rotateRight) ? "right" : "left");
+		Robot.myLogger.log("Rotation","currentAngle", Robot.oi.gyro.getAngle());
 		SmartDashboard.putNumber("Current angle: ", Robot.oi.gyro.getAngle());
-		System.out.println("Current angle: " + Robot.oi.gyro.getAngle());
 		turnAngle = desiredAngle - Robot.oi.gyro.getAngle();
 		Robot.oi.gyro.reset();
-		if (turnAngle >0 ) {
+		if (turnAngle > 0) {
 			rotateRight = true;
 		}
 		else {
 			rotateRight = false;
 		}
-		startTime = System.currentTimeMillis();
+		Robot.myLogger.log("Rotation","turnAngle", turnAngle);
 		turnAngle = Math.abs(turnAngle);
 	}
 	
@@ -42,7 +44,7 @@ public class Rotation extends Command {
 	protected void execute() {
 		angle = Math.abs(Robot.oi.gyro.getAngle());
 		SmartDashboard.putNumber("Gyro angle", angle);
-		System.out.println("Gyro angle" + angle);
+		Robot.myLogger.log("Rotation","angle", angle);
 
 		if (angle >= turnAngle) {
 			Robot.oi.left.set(ControlMode.Velocity, 0);
@@ -50,7 +52,7 @@ public class Rotation extends Command {
 		}
 		else {
 			double t = 1023*((turnAngle - angle)/turnAngle);
-			if (t < 800) t = 800;
+			if (t < 1000) t = 1000; //was 800
 			double rotateSpeed = t;
 			if (rotateRight) {
 				Robot.oi.left.set(ControlMode.Velocity, rotateSpeed);
@@ -66,10 +68,8 @@ public class Rotation extends Command {
 	@Override
 	protected boolean isFinished() {
 		if (angle >= turnAngle) {
-			System.out.println("Auto Rotate  TurningAngle: " + turnAngle
-					+ ", End Angle: " + angle
-					+ ", Right: " + rotateRight
-					+ ", Elapsed: " + (System.currentTimeMillis() - startTime)/1000);
+			Robot.myLogger.log("Rotation", "Done", (System.currentTimeMillis() - startTime)/1000);
+			Robot.myLogger.log("Rotation", "endAngle", angle);
 			Robot.oi.left.set(0);
 			Robot.oi.right.set(0);
 

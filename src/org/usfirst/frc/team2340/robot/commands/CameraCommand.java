@@ -99,8 +99,14 @@ public class CameraCommand extends Command {
 	public void switchView(){
 		if(curCam == camera0){
 			curCam = camera1;
+			curCam.setFPS(10);
+			curCam.setResolution((int)Robot.oi.IMG_WIDTH, (int)Robot.oi.IMG_HEIGHT); //640 = width, 480 = height
+//			CameraServer.getInstance().startAutomaticCapture(curCam);
 		} else if(curCam == camera1){
 			curCam = camera0;
+			curCam.setFPS(10);
+			curCam.setResolution((int)Robot.oi.IMG_WIDTH, (int)Robot.oi.IMG_HEIGHT); //640 = width, 480 = height
+//			CameraServer.getInstance().startAutomaticCapture(curCam);
 		}
 	}
 }
